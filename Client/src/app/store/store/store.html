@@ -1,0 +1,58 @@
+<div class="store">
+  <h1>Our Products</h1>
+
+  <div class="store-layout">
+    <!-- Filters -->
+    <aside class="filters">
+      <h3>Filter by Brand</h3>
+      <button class="filter-btn all-btn" (click)="selectedBrand.set(null); applyFilters()">All</button>
+      <ng-container *ngFor="let brand of brands()">
+        <button class="filter-btn" (click)="selectedBrand.set(brand.name); applyFilters()">{{brand.name}}</button>
+      </ng-container>
+
+      <h3>Filter by Type</h3>
+      <button class="filter-btn all-btn" (click)="selectedType.set(null); applyFilters()">All</button>
+      <ng-container *ngFor="let type of types()">
+        <button class="filter-btn" (click)="selectedType.set(type.name); applyFilters()">{{type.name}}</button>
+      </ng-container>
+
+      <h3>Sort by</h3>
+      <select (change)="onSortChange($event)" [value]="sortOption()">
+        <option value="default">Default</option>
+        <option value="priceAsc">Price (Low to High)</option>
+        <option value="priceDesc">Price (High to Low)</option>
+      </select>
+
+      <button class="filter-btn reset-btn" (click)="resetFilters()">Reset</button>
+    </aside>
+
+    <!-- Product Grid -->
+    <div class="grid">
+      <div class="card" *ngFor="let product of paginationProducts()">
+        <img [src]="getImagePath(product?.imageFile)" [alt]="product.name ?? 'product'" />
+
+
+
+        <h3>{{ product?.name }}</h3>
+        <p>{{ product?.brand?.name }} - {{ product.type.name }}</p>
+        <p class="price">{{ product?.price | currency }}</p>
+
+        <div class="card-actions">
+          <a
+            routerLink="/store/product/{{ product?.id }}"
+            class="btn-view-details"><i class="fa fa-search"></i>View Details</a>
+          <button class="btn-add-cart" (click)="addToCart(product)"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <button (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1">Previous</button>
+    <button *ngFor="let page of [].constructor(totalPages()); let i = index"
+            (click)="goToPage(i + 1)"
+            [class.active]="currentPage() === i + 1">{{ i + 1 }}</button>
+    <button (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages()">Next</button>
+  </div>
+</div>

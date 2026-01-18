@@ -1,0 +1,22 @@
+.server-error{
+  text-align: center;
+  margin-top: 5rem;
+  h1{
+    font-size: 1.25rem;
+    margin: 1rem 0;
+  }
+  p{
+    font-size: 1.25rem;
+    margin: 1rem 0;
+  }
+  a{
+    background: #131921;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: .25px;
+    text-decoration: none;
+    &:hover{
+      background: #37475a;
+    }
+  }
+}

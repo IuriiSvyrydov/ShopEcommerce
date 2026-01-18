@@ -1,0 +1,14 @@
+﻿import {Brand} from './Brands';
+import {Type} from './Type';
+
+export interface Product{
+  id: string;
+  name: string;
+  summary: string| null;
+  description: string| null;
+  imageFile: string;
+  brand: Brand;
+  type: Type;
+  price: number;
+  createDate:string
+}

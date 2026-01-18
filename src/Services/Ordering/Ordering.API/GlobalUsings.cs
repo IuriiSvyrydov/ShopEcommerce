@@ -1,0 +1,13 @@
+﻿global using MediatR;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using Ordering.Application.DTO;
+global using Ordering.Application.Features.Commands;
+global using Ordering.Application.Features.Queries;
+global using Ordering.Application.Mappings;
+global using Infrastructure.Messages.Common;
+global using MassTransit;
+global using Ordering.Application.Extensions;
+global using Ordering.Infrastructure.Data;
+global using Ordering.Infrastructure.EventBusConsumer;
+global using Ordering.Infrastructure.Extensions;

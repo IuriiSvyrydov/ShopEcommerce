@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>f62c522b-a0d3-481a-8185-d2329d6b3d54</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+        <DockerfileContext>..\..\..\..</DockerfileContext>
+        <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MassTransit" Version="8.5.7" />
+        <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.7" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.11" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Gateway\ApiGateway\ApiGateway.csproj" />
+      <ProjectReference Include="..\Ordering.Application\Ordering.Application.csproj" />
+      <ProjectReference Include="..\Ordering.Infrastructure\Ordering.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

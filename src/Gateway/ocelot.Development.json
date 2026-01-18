@@ -1,0 +1,139 @@
+﻿{
+  "Routes": [
+    /* ======================= CATALOG ======================= */
+    {
+      "DownstreamPathTemplate": "/api/v1/Catalog/GetAllProducts",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Catalog/GetAllProducts",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Catalog/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "catalog.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Catalog/{id}",
+      "UpstreamHttpMethod": [ "GET", "DELETE" ],
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+
+    /* ======================= BASKET ======================== */
+    {
+      "DownstreamPathTemplate": "/api/v1/Basket/{userName}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "basket.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Basket/{userName}",
+      "UpstreamHttpMethod": [ "GET", "POST", "DELETE" ],
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+
+    /* ======================= DISCOUNT ====================== */
+    {
+      "DownstreamPathTemplate": "/api/v1/Discount/{productName}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "discount.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Discount/{productName}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+
+    /* ======================= ORDERING ====================== */
+    {
+      "DownstreamPathTemplate": "/api/v1/Order",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ordering.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Order",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+
+    /* ======================= IDENTITY ====================== */
+    {
+      "DownstreamPathTemplate": "/api/v1/Identity/Login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "identity.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Identity/Login",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Auth/register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "identity.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Auth/register",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+
+    /* ======================= PAYMENT ======================= */
+    {
+      "DownstreamPathTemplate": "/api/v1/Payment",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "payment.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/Payment",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    }
+  ],
+
+  "GlobalConfiguration": {
+    "BaseUrl": "http://apigateway:8080"
+  }
+}

@@ -1,0 +1,10 @@
+﻿global using Application.Features.Commands;
+global using Application.Features.Queries;
+global using Basket.Application.Features.Commands;
+global using MassTransit;
+global using MediatR;
+global using Microsoft.Extensions.Logging;
+global using Basket.Domain.Entities;
+global using Basket.Application.DTOs;
+global using Basket.Application.Features.Responses;
+global using Infrastructure.Messages.Events;

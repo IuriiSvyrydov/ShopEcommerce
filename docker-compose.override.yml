@@ -1,0 +1,22 @@
+
+
+services:
+  catalog.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+  discount.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+  basket.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+  payment.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+  apigateway:
+    volumes:
+      - ./src/Gateway/ApiGateway/ocelot.Development.json:/app/ocelot.Development.json:ro

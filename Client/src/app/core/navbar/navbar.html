@@ -1,0 +1,104 @@
+<nav class="navbar">
+  <!-- LEFT -->
+  <div class="navbar__left">
+    <a routerLink="/" class="navbar__logo">Amazon</a>
+    <button class="navbar__departments">Departments</button>
+  </div>
+
+  <!-- CENTER -->
+  <div class="navbar__center">
+    <select class="navbar__category">
+      <option value="all">All</option>
+      <option value="books">Books</option>
+      <option value="electronics">Electronics</option>
+    </select>
+
+    <input
+      class="navbar__search"
+      [(ngModel)]="searchText"
+      placeholder="Search Amazon"
+      (keyup.enter)="onSearch()"
+    />
+
+    <button class="navbar__search-button" (click)="onSearch()">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="navbar__right">
+
+    <!-- AUTH BLOCK -->
+    <ng-container *ngIf="isAuthReady(); else loading">
+      <ng-container *ngIf="isLoggedIn(); else guest">
+
+      <!-- LOGGED IN -->
+      <div class="navbar__dropdown" *ngIf="isLoggedIn(); else guest">
+        <span class="navbar__link">
+          Hello, {{ auth.isLoggedIn() ? auth.user()?.firstName : 'Guest' }}<br />
+          <span>
+            Account & Lists
+            <i class="fa-solid fa-caret-down"></i>
+          </span>
+        </span>
+
+        <div class="navbar__dropdown-content">
+          <a routerLink="/account">Your Account</a>
+          <a routerLink="/orders">Orders</a>
+          <a (click)="logout()">Sign Out</a>
+        </div>
+      </div>
+
+    </ng-container>
+      </ng-container>
+
+
+    <!-- GUEST -->
+    <ng-template #guest>
+      <div class="navbar__dropdown">
+        <a routerLink="/auth/login" class="navbar__link">
+          Hello, Guest<br />
+          <span>
+            Account & Lists
+            <i class="fa-solid fa-caret-down"></i>
+          </span>
+        </a>
+
+        <div class="navbar__dropdown-content">
+          <a routerLink="/auth/login">Sign In</a>
+          <a routerLink="/auth/register">Register</a>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- LOADING -->
+    <ng-template #loading>
+      <div class="navbar__dropdown">
+        <span class="navbar__link">Loading...</span>
+      </div>
+    </ng-template>
+
+    <!-- ORDERS -->
+    <a routerLink="/orders" class="navbar__link">
+      Returns<br />
+      <span>& Orders</span>
+    </a>
+
+    <!-- CART -->
+    <a
+      routerLink="/store/basket"
+      class="navbar__link navbar__cart"
+      title="You have {{ cartCount }} items in your cart"
+    >
+      <i class="fa-solid fa-cart-shopping"></i>
+      Cart
+      <span
+        *ngIf="cartCount > 0"
+        class="navbar__cart-badge"
+      >
+        {{ cartCount }}
+      </span>
+    </a>
+
+  </div>
+</nav>

@@ -1,0 +1,70 @@
+.auth {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+
+  &__card {
+    width: 350px;
+    padding: 2rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+
+    h1 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+
+      input {
+        margin-top: 0.25rem;
+        padding: 0.5rem;
+        border: 1px solid #a6a6a6;
+        border-radius: 4px;
+
+        &:focus {
+          outline: none;
+          border-color: #ff9900;
+          box-shadow: 0 0 0 2px rgba(255,153,0,.2);
+        }
+      }
+    }
+
+    button {
+      width: 100%;
+      padding: 0.6rem;
+      background: #ffd814;
+      border: 1px solid #fcd200;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+
+      &:hover {
+        background: #f7ca00;
+      }
+
+      &:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+      }
+    }
+
+    .error {
+      color: #c40000;
+      font-size: .8rem;
+      margin-top: .5rem;
+    }
+
+    &__switch {
+      margin-top: 1rem;
+      font-size: .85rem;
+      text-align: center;
+    }
+  }
+}

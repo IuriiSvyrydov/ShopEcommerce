@@ -1,0 +1,49 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Gateway/">
+    <File Path="src/Gateway/ocelot.Development.json" />
+    <Project Path="src/Gateway/ApiGateway/ApiGateway.csproj" Id="3d6c6787-2efb-44a3-9eea-eef698b7daec" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="D:/Projects/ShopEcommerce/src/Infrastructure/Infrastructure.Messages/Infrastructure.Messages.csproj" Id="e2891676-9514-415c-97f3-0a5b0946eb90" />
+    <Project Path="src/Infrastructure/Common.Logging/Common.Logging.csproj" Id="76022c1c-cc24-48f1-babc-c4234ded73ca" />
+  </Folder>
+  <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/Basket/">
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Basket/Basket.API/Basket.API.csproj" Id="647e41c3-96f9-4caf-afe1-2b092e08ae7f" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Basket/Basket.Application/Basket.Application.csproj" Id="a6998365-2857-4b01-8cae-8f45f45b3c8c" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Basket/Basket.Infrastructure/Basket.Infrastructure.csproj" Id="9bfb50eb-e1a8-4159-9182-61094823fb09" />
+    <Project Path="src/Services/Basket/Basket.Domain/Basket.Domain.csproj" Id="731bc5ad-bc0f-4fc6-b526-a04cc23465af" />
+  </Folder>
+  <Folder Name="/src/Services/Catalog/">
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Catalog/Catalog.API/Catalog.API.csproj" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Catalog/Catalog.Application/Catalog.Application.csproj" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Catalog/Catalog.Domain/Catalog.Domain.csproj" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Catalog/Catalog.Infrastructure/Catalog.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Discount/">
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Discount/Discount.API/Discount.API.csproj" Id="0f6a47fc-fba4-4e11-8c72-3c3c7f9b9712" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Discount/Discount.Application/Discount.Application.csproj" Id="e8f87828-a1ee-4028-bced-0ab9b4abf898" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Discount/Discount.Domain/Discount.Domain.csproj" Id="af18625f-1bf9-4fe5-8863-e593faa35537" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Discount/Discount.Infrastructure/Discount.Infrastructure.csproj" Id="8b11532c-47d5-469c-a87a-11594b996ae8" />
+  </Folder>
+  <Folder Name="/src/Services/Identity/">
+    <Project Path="src/Services/Identity/Identity.API/Identity.API.csproj" Id="f8ed05b7-96a2-4174-bd37-12c15a0873b2" />
+    <Project Path="src/Services/Identity/Identity.Application/Identity.Application.csproj" Id="582772ac-9d72-4ca2-b6a8-2de2052deedd" />
+    <Project Path="src/Services/Identity/Identity.Domain/Identity.Domain.csproj" Id="5aba4b36-81a3-4bdd-9613-38e1cfec0902" />
+    <Project Path="src/Services/Identity/Identity.Infrastructure/Identity.Infrastructure.csproj" Id="8e2c6b40-2750-4ff9-93f2-35cf3948ad68" />
+  </Folder>
+  <Folder Name="/src/Services/Ordering/">
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Ordering/Ordering.API/Ordering.API.csproj" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Ordering/Ordering.Application/Ordering.Application.csproj" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Ordering/Ordering.Domain/Ordering.Domain.csproj" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Ordering/Ordering.Infrastructure/Ordering.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Payment/">
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Payment/Payment.API/Payment.API.csproj" Id="8e5367f8-9b6e-4846-a5a3-d93bf8746708" />
+    <Project Path="D:/Projects/ShopEcommerce/src/Services/Payment/Payment.Infrastructure/Payment.Infrastructure.csproj" Id="8322b91f-7631-4dbe-8efb-c18cb77fff08" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>

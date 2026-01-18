@@ -1,0 +1,346 @@
+version: "3.9"
+
+networks:
+  appnet:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongo_data:
+  elasticsearch_data:
+  pgadmin_data:
+  orderdb-data:
+  identitydb-data:
+
+services:
+  # ===================== DATABASES =====================
+
+  basketdb:
+    image: redis:alpine
+    container_name: basketdb
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  catalogdb:
+    image: mongo:latest
+    container_name: catalogdb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  discountdb:
+    image: postgres:15
+    container_name: discountdb
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: DiscountDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  orderingdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: orderingdb
+    restart: always
+    environment:
+      SA_PASSWORD: "Passw0rd123!"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - orderdb-data:/var/opt/mssql
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Passw0rd123! -Q \"SELECT 1\" || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 180s
+
+  identitydb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: identitydb
+    restart: always
+    environment:
+      SA_PASSWORD: "Passw0rd123!"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1435:1433"
+    volumes:
+      - identitydb-data:/var/opt/mssql
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Passw0rd123! -Q \"SELECT 1\" || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 15
+      start_period: 180s
+
+  # ===================== INFRA =====================
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
+    container_name: elasticsearch
+    restart: always
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.14.3
+    container_name: kibana
+    restart: always
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - "5601:5601"
+    networks:
+      - appnet
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - appnet
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9000:9000"
+    networks:
+      - appnet
+
+  # ===================== APIs =====================
+
+  catalog.api:
+    build:
+      context: .
+      dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
+    container_name: catalogapi
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      DatabaseSettings__ConnectionString: mongodb://catalogdb:27017
+      ElasticConfiguration__Uri: http://elasticsearch:9200
+    depends_on:
+      catalogdb:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    ports:
+      - "8000:8080"
+    networks:
+      - appnet
+
+  basket.api:
+    build:
+      context: .
+      dockerfile: src/Services/Basket/Basket.API/Dockerfile
+    container_name: basketapi
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Redis: basketdb:6379
+      EventBusSettings__HostAddress: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      basketdb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8001:8080"
+    networks:
+      - appnet
+
+  discount.api:
+    build:
+      context: .
+      dockerfile: src/Services/Discount/Discount.API/Dockerfile
+    container_name: discountapi
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      DatabaseSettings__ConnectionString: Host=discountdb;Port=5432;Database=DiscountDb;User Id=postgres;Password=postgres
+      EventBusSettings__HostAddress: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      discountdb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8002:8080"
+    networks:
+      - appnet
+
+  ordering.api:
+    build:
+      context: .
+      dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
+    container_name: orderingapi
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: >
+        Server=orderingdb,1433;
+        Database=OrderingDb;
+        User Id=sa;
+        Password=Passw0rd123!;
+        TrustServerCertificate=True;
+        Encrypt=False;
+        ConnectRetryCount=10;
+        ConnectRetryInterval=10
+    depends_on:
+      orderingdb:
+        condition: service_healthy
+    ports:
+      - "8003:8080"
+    networks:
+      - appnet
+
+  identity.api:
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.API/Dockerfile
+    container_name: identityapi
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: >
+        Server=identitydb,1433;
+        Database=IdentityDb;
+        User Id=sa;
+        Password=Passw0rd123!;
+        TrustServerCertificate=True;
+        Encrypt=False;
+        ConnectRetryCount=10;
+        ConnectRetryInterval=10
+      Jwt__Key: "super_secret_key_1234567890!@#$123"
+      Jwt__Issuer: ecommerce.identity
+      Jwt__Audience: ecommerce.clients
+    depends_on:
+      identitydb:
+        condition: service_healthy
+    ports:
+      - "8085:8080"
+    networks:
+      - appnet
+
+  payment.api:
+    build:
+      context: .
+      dockerfile: src/Services/Payment/Payment.API/Dockerfile
+    container_name: paymentapi
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      EventBusSettings__HostAddress: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8004:8080"
+    networks:
+      - appnet
+
+  apigateway:
+    build:
+      context: .
+      dockerfile: src/Gateway/ApiGateway/Dockerfile
+    container_name: apigateway
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Jwt__Key: "super_secret_key_1234567890!@#$123"
+      Jwt__Issuer: ecommerce.identity
+      Jwt__Audience: ecommerce.clients
+    depends_on:
+      catalog.api:
+        condition: service_healthy
+      basket.api:
+        condition: service_healthy
+      discount.api:
+        condition: service_healthy
+      ordering.api:
+        condition: service_healthy
+      identity.api:
+        condition: service_healthy
+      payment.api:
+        condition: service_healthy
+    ports:
+      - "8010:8080"
+    networks:
+      - appnet

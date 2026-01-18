@@ -1,0 +1,14 @@
+﻿global using Application.Features.Products.Commands;
+global using Catalog.Application.DTOs;
+global using Catalog.Application.Features.Products.Queries.GetAll;
+global using Catalog.Application.Features.Products.Queries.GetById;
+global using Catalog.Application.Features.Products.Queries.GetByName;
+global using Catalog.Application.Mapping;
+global using Catalog.Domain.Specifications;
+global using MediatR;
+global using Microsoft.AspNetCore.Mvc;
+global using Infrastructure.Data;
+global using Infrastructure.Extensions;
+global using MongoDB.Bson;
+global using MongoDB.Bson.Serialization;
+global using MongoDB.Bson.Serialization.Serializers;

@@ -1,42 +1,51 @@
-using ApiGateway.Middleware;
-using Common.Logging;
-using Identity.API.Extensions;
-using Identity.Application.Extensions;
-using Identity.Infrastructure.Data;
-using Identity.Infrastructure.Extensions;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
-using System.Text.Json;
 
-var builder = WebApplication.CreateBuilder(args);
 
-// ===================== SERVICES =====================
-builder.Services.AddControllers()
-    .AddJsonOptions(o =>
+internal class Program
+{
+    private static void Main(string[] args)
     {
-        o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    });
-builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen();
+        var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.RegisterInfrastructureLayer(builder.Configuration);
-builder.Services.RegisterIdentity(builder.Configuration);
-builder.Services.RegisterApplicationLayer();
+        // ===================== SERVICES =====================
+        builder.Services.AddControllers()
+            .AddJsonOptions(o =>
+            {
+                o.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
+        builder.Services.AddOpenApi();
+        builder.Services.AddSwaggerGen(p =>
+          p.SwaggerDoc("v1", new() { Title = "Identity.API", Version = "v1" }));
 
-builder.Host.UseSerilog(Logging.ConfigurationLogger);
+        builder.Services.RegisterInfrastructureLayer(builder.Configuration);
+        builder.Services.RegisterIdentity(builder.Configuration);
+        builder.Services.RegisterApplicationLayer();
 
-// ===================== APP =====================
-var app = builder.Build();
+        builder.Host.UseSerilog(Logging.ConfigurationLogger);
 
-// ===================== MIGRATIONS =====================
+        // ===================== APP =====================
+        var app = builder.Build();
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider
+                .GetRequiredService<ApplicationUserDbContext>();
 
-// ===================== PIPELINE =====================
-app.UseSwagger();
-app.UseSwaggerUI();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
+            db.Database.Migrate();
+        }
 
-app.Run();
+
+        // ===================== MIGRATIONS =====================
+
+        // ===================== PIPELINE =====================
+        app.UseSwagger();
+        app.UseSwaggerUI();
+       
+
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.MapControllers();
+
+        app.Run();
+    }
+}

@@ -295,7 +295,7 @@ services:
       identitydb:
         condition: service_healthy
     ports:
-      - "8085:8080"
+      - "8005:8080"
     networks:
       - appnet
 

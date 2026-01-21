@@ -11,11 +11,11 @@ public static class AddInfrastructureLayer
 {
     public static IServiceCollection RegisterInfrastructureLayer(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationUserDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")
-            /*sql=>sql.EnableRetryOnFailure(
+        services.AddDbContext<ApplicationUserDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+            sql=>sql.EnableRetryOnFailure(
                 maxRetryCount: 5,
                 maxRetryDelay: TimeSpan.FromSeconds(10),
-                errorNumbersToAdd: null)*/));
+                errorNumbersToAdd: null)));
 
         //----------------------------------Services ----------------------------------/
         services.AddScoped<IIdentityService, IdentityService>();

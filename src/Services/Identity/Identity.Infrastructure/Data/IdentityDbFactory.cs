@@ -9,7 +9,7 @@ namespace Identity.Infrastructure.Data;
         public ApplicationUserDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationUserDbContext>();
-            optionsBuilder.UseSqlServer("Server=localhost,1433;Database=IdentityDb;User Id=sa;Password=Passw0rd123!;TrustServerCertificate=True;Encrypt=False");
+            optionsBuilder.UseSqlServer("Server=localhodt,1435;Database=IdentityDb;User Id=sa;Password=Passw0rd123!;TrustServerCertificate=True;Encrypt=False");
             return new ApplicationUserDbContext(optionsBuilder.Options);
         }
     }

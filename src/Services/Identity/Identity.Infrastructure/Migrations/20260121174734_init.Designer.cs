@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Identity.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationUserDbContext))]
-    [Migration("20260118114926_init")]
+    [Migration("20260121174734_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -24,51 +24,6 @@ namespace Identity.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Identity.Domain.Entities.RefreshToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpiresOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("ReplacedByTokenId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ReplacedByTokenId1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("RevokedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReplacedByTokenId")
-                        .IsUnique()
-                        .HasFilter("[ReplacedByTokenId] IS NOT NULL");
-
-                    b.HasIndex("ReplacedByTokenId1");
-
-                    b.HasIndex("Token")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RefreshTokens", (string)null);
-                });
 
             modelBuilder.Entity("Identity.Infrastructure.Models.ApplicationUser", b =>
                 {
@@ -314,24 +269,44 @@ namespace Identity.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Identity.Domain.Entities.RefreshToken", b =>
+            modelBuilder.Entity("RefreshToken", b =>
                 {
-                    b.HasOne("Identity.Domain.Entities.RefreshToken", null)
-                        .WithOne()
-                        .HasForeignKey("Identity.Domain.Entities.RefreshToken", "ReplacedByTokenId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasOne("Identity.Domain.Entities.RefreshToken", "ReplacedByToken")
-                        .WithMany()
-                        .HasForeignKey("ReplacedByTokenId1");
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
 
-                    b.HasOne("Identity.Infrastructure.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<DateTime>("ExpiresOnUtc")
+                        .HasColumnType("datetime2");
 
-                    b.Navigation("ReplacedByToken");
+                    b.Property<Guid?>("ReplacedByTokenId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("RevokedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReplacedByTokenId")
+                        .IsUnique()
+                        .HasFilter("[ReplacedByTokenId] IS NOT NULL");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Identity.Infrastructure.Models.RefreshTokenEntity", b =>
@@ -401,6 +376,25 @@ namespace Identity.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("RefreshToken", b =>
+                {
+                    b.HasOne("RefreshToken", null)
+                        .WithOne()
+                        .HasForeignKey("RefreshToken", "ReplacedByTokenId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Identity.Infrastructure.Models.ApplicationUser", null)
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Identity.Infrastructure.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

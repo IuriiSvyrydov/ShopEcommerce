@@ -25,45 +25,31 @@ export class RegisterComponent {
 
   loading = false;
   error: string | null = null;
-
   submit() {
     this.error = null;
     this.loading = true;
 
     this.auth.register(this.model).subscribe({
       next: () => {
-        // После успешной регистрации сразу логиним пользователя
-        this.auth.login({
-          email: this.model.email,
-          password: this.model.password,
-        }).subscribe({
-          next: () => {
-            this.loading = false;
-            this.router.navigate(['/']);
-          },
-          error: err => {
-            this.loading = false;
-            console.error('Login error:', err);
-            this.error = 'Login failed after registration';
-          }
-        });
+        this.loading = false;
+        this.router.navigate(['/']);
       },
       error: err => {
         this.loading = false;
 
         if (err.error?.errors) {
-          // Identity errors
           this.error = err.error.errors
             .map((e: any) => e.Description || e.description)
             .join(', ');
         } else if (err.error?.message) {
           this.error = err.error.message;
         } else {
-          this.error = 'Registration failed (server error)';
+          this.error = 'Registration failed';
         }
 
-        console.error('Server error:', err);
+        console.error(err);
       }
     });
   }
+
 }

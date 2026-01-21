@@ -163,13 +163,12 @@ namespace Identity.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     ExpiresOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RevokedOnUtc = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ReplacedByTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ReplacedByTokenId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    ReplacedByTokenId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -186,11 +185,6 @@ namespace Identity.Infrastructure.Migrations
                         principalTable: "RefreshTokens",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_RefreshTokens_RefreshTokens_ReplacedByTokenId1",
-                        column: x => x.ReplacedByTokenId1,
-                        principalTable: "RefreshTokens",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -267,11 +261,6 @@ namespace Identity.Infrastructure.Migrations
                 column: "ReplacedByTokenId",
                 unique: true,
                 filter: "[ReplacedByTokenId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_ReplacedByTokenId1",
-                table: "RefreshTokens",
-                column: "ReplacedByTokenId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_Token",

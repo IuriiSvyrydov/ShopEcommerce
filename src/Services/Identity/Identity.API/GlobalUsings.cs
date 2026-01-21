@@ -1,0 +1,16 @@
+﻿global using ApiGateway.Middleware;
+global using Common.Logging;
+global using Identity.API.Extensions;
+global using Identity.Application.Extensions;
+global using Identity.Infrastructure.Data;
+global using Identity.Infrastructure.Extensions;
+global using Microsoft.Data.SqlClient;
+global using Microsoft.EntityFrameworkCore;
+global using Serilog;
+global using System.Text.Json;
+global using Identity.API.DTOs;
+global using Identity.Application.Exceptions;
+global using Identity.Application.Features.Commands;
+global using Identity.Application.Features.Commands.Email.Commands;
+global using MediatR;
+global using Microsoft.AspNetCore.Mvc;

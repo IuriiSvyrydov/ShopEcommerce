@@ -1,10 +1,4 @@
-﻿using Identity.API.DTOs;
-using Identity.Application.Exceptions;
-using Identity.Application.Features.Commands;
-using Identity.Application.Features.Commands.Email.Commands;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-
+﻿
 [Route("api/v1/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
@@ -17,7 +11,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody]RegisterDto registerDto)
+    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
     {
         try
         {
@@ -31,7 +25,6 @@ public class AuthController : ControllerBase
         }
         catch (IdentityException ex)
         {
-            
             return BadRequest(new
             {
                 message = "Identity operation failed",
@@ -60,12 +53,13 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Invalid credentials" });
         }
     }
+
     [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenRequest)
+    public async Task<IActionResult> RefreshToken()
     {
         try
         {
-            var result = await _mediator.Send(new RefreshTokenCommand(refreshTokenRequest.RefreshToken));
+            var result = await _mediator.Send(new RefreshTokenCommand());
             return Ok(result);
         }
         catch (IdentityException ex)
@@ -73,6 +67,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword(
       [FromBody] ResetPasswordCommand command)
@@ -95,6 +90,7 @@ public class AuthController : ControllerBase
             return StatusCode(500, new { message = "Internal server error." });
         }
     }
+
     [HttpPost("send-email")]
     public async Task<IActionResult> SendEmail([FromBody] SendEmailDto sendEmailDto)
     {
@@ -112,5 +108,12 @@ public class AuthController : ControllerBase
         }
     }
 
-
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+    {
+        await _mediator.Send(new ForgotPasswordCommand(
+            forgotPasswordDto.EmailOrPhone,
+            forgotPasswordDto.ClientUrl));
+        return Ok(new { message = "If an account with that email or phone number exists, a password reset link has been sent." });
+    }
 }

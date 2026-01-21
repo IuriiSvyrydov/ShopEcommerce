@@ -22,7 +22,9 @@ public class Program
         BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
         builder.Services.AddSwaggerGen(c =>
         {
+
             c.SwaggerDoc("v1", new() { Title = "Catalog.API", Version = "v1" });
+   
         });
         //var env = builder.Environment;
         //DatabaseSeeder.SeedAsync(builder.Configuration).Wait();
@@ -38,11 +40,8 @@ public class Program
             app.MapOpenApi();
         }
         app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.RoutePrefix = string.Empty;
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Catalog.API v1");
-        });
+        app.UseSwaggerUI(c=>c.RoutePrefix = "swagger");
+       
         using (var scope = app.Services.CreateScope())
         {
             var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();

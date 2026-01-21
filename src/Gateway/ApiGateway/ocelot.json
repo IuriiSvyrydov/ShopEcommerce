@@ -181,42 +181,45 @@
     },
 
     // ===================== AUTH =====================
-
     {
-      "UpstreamPathTemplate": "/Auth/register",
+      "UpstreamPathTemplate": "/api/v1/auth/register",
       "UpstreamHttpMethod": [ "POST" ],
-      "DownstreamPathTemplate": "/api/Auth/register",
+      "DownstreamPathTemplate": "/api/v1/Auth/register",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "identity.api",
+          "Host": "identityapi",
           "Port": 8080
         }
       ]
     },
     {
-      "UpstreamPathTemplate": "/Auth/login",
+      "UpstreamPathTemplate": "/api/v1/auth/login",
       "UpstreamHttpMethod": [ "POST" ],
-      "DownstreamPathTemplate": "/api/Auth/login",
+      "DownstreamPathTemplate": "/api/v1/Auth/login",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "identity.api",
+          "Host": "identityapi",
           "Port": 8080
         }
       ]
     },
     {
-      "UpstreamPathTemplate": "/Auth/refresh-token",
+      "UpstreamPathTemplate": "/api/v1/auth/refresh-token",
       "UpstreamHttpMethod": [ "POST" ],
-      "DownstreamPathTemplate": "/api/Auth/refresh-token",
+      "DownstreamPathTemplate": "/api/v1/Auth/refresh-token",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "identity.api",
+          "Host": "identityapi",
           "Port": 8080
         }
       ]
     }
-    ]
+
+
+
+
+  ]
 }

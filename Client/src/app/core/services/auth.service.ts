@@ -70,6 +70,10 @@ export class AuthService {
     this.authReady.set(true);
     this.router.navigate(['/auth/login']);
   }
+  //------------FORGOT PASSWORD----------
+  forgotPassword(emailOrPhone: string,clientUrl:string) {
+    return this.http.post<{message:string}>(`${this.baseUrl}/forgot-password`, { emailOrPhone, clientUrl });
+  }
 
   private clearAuth() {
     this.accessToken.set(null);

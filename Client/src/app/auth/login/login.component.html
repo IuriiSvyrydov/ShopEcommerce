@@ -1,7 +1,8 @@
 <div class="login-container">
-  <h2>Sign in</h2>
+  <h1>Sign in</h1>
 
   <form (ngSubmit)="submit()" #loginForm="ngForm">
+
     <!-- Email -->
     <div class="form-group">
       <label for="email">Email</label>
@@ -28,20 +29,21 @@
       />
     </div>
 
-    <!-- Error message -->
-    <div *ngIf="error" class="error-message">
+    <!-- Error -->
+    <div *ngIf="error" class="error">
       {{ error }}
     </div>
 
-    <!-- Submit button -->
+    <!-- Submit -->
     <button type="submit" [disabled]="loading">
-      {{ loading ? 'Signing in...' : 'Sign in' }}
+      {{ loading ? 'Signing in…' : 'Sign in' }}
     </button>
   </form>
 
-  <!-- Optional: links -->
+  <!-- Links -->
   <div class="login-links">
     <a routerLink="/auth/register">Create your account</a>
-    <!-- Remember me can be added later -->
+    <span class="separator">|</span>
+    <a routerLink="/auth/forgot-password">Forgot password?</a>
   </div>
 </div>

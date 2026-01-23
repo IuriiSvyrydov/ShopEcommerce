@@ -46,6 +46,10 @@ export class AuthService {
         switchMap(() => this.login({ email: request.email, password: request.password }))
       );
   }
+  //-------------------- RESET PASSWORD
+  resetPassword(userId:string,token:string,newPassword:string){
+    return this.http.post(`${this.baseUrl}/reset-password`,{userId,token,newPassword});
+  }
 
   // ---------- REFRESH ----------
   refresh() {

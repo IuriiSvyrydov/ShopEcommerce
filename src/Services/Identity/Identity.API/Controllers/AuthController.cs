@@ -57,15 +57,11 @@ public class AuthController : ControllerBase
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken()
     {
-        try
-        {
+        
             var result = await _mediator.Send(new RefreshTokenCommand());
             return Ok(result);
-        }
-        catch (IdentityException ex)
-        {
-            return BadRequest(new { message = ex.Message });
-        }
+        
+       
     }
 
     [HttpPost("reset-password")]

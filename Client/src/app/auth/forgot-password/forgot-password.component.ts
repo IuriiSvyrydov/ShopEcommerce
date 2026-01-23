@@ -18,23 +18,29 @@ export class ForgotPasswordComponent {
 
   private auth = inject(AuthService);
 
-  submit(){
+  submit() {
     if (!this.email()) return;
+
     this.loading.set(true);
     this.message.set('');
+
     this.auth
-      .forgotPassword(this.email(),`${window.origin}/auth/reset-password`)
+      .forgotPassword(this.email(), window.location.origin)
       .subscribe({
-        next: res=>{
-          this.message.set(res.message|| 'Check your email for the reset password link')
+        next: res => {
+          this.message.set(
+            res.message || 'Check your email for the reset password link'
+          );
           this.loading.set(false);
         },
-        error: err=>{
-          this.message.set(err.error?.message|| 'Failed to send reset password email')
+        error: err => {
+          this.message.set(
+            err.error?.message || 'Failed to send reset password email'
+          );
           this.loading.set(false);
         },
-      
       });
   }
+
 
 }

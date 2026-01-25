@@ -22,7 +22,7 @@
     <Project Path="D:/Projects/ShopEcommerce/src/Services/Catalog/Catalog.Infrastructure/Catalog.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Services/Currency/">
-    <Project Path="../Currency.API/Currency.API.csproj" Id="548754d1-162b-4d7f-bf12-53d9d8aed167" />
+    <Project Path="src/Services/Currency/Currency.API/Currency.API.csproj" Id="ef739995-5ee2-43ca-a31f-61942a0f969e" />
     <Project Path="src/Services/Currency/Currency.Application/Currency.Application.csproj" Id="7487a961-366d-4174-8eb9-f193ff3dbade" />
     <Project Path="src/Services/Currency/Currency.Domain/Currency.Domain.csproj" Id="af56c86d-4db0-44ab-a8a0-324491b02042" />
     <Project Path="src/Services/Currency/Currency.Infrastructure/Currency.Infrastructure.csproj" Id="c2f57a0e-8f7f-4965-a7d5-ff33da6085a3" />

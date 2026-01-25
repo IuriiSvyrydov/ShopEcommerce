@@ -9,6 +9,7 @@ namespace Currency.Infrastructure.Persistence.Mongo.Documents;
 public class CurrencyRateDocument
 {
     [BsonId]
+    [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
     public string BaseCurrency { get; set; } = default!;
     public string TargetCurrency { get; set; } = default!;

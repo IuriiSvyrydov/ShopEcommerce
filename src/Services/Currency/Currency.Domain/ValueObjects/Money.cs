@@ -9,7 +9,7 @@ public sealed class Money : IEquatable<Money>
     
     
     public Currency Currency { get; }
-    private Money(decimal amount, Currency currency)
+    public Money(decimal amount, Currency currency)
     {
         if (amount < 0)
             throw DomainException.InvalidCurrencyCode();

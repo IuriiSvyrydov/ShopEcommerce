@@ -240,7 +240,35 @@
           "Port": 8080
         }
       ]
+    },
+    // ===================== CURRENCY =====================
+
+    {
+      "UpstreamPathTemplate": "/Currency/convert",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/v1/Currency/convert",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "currency.api",
+          "Port": 8080
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/Currency/rate",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/v1/Currency/rate",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "currency.api",
+          "Port": 8080
+        }
+      ]
     }
+
 
 
 

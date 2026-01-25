@@ -7,7 +7,7 @@
             BaseCurrency = entity.BaseCurrency.Code,
             TargetCurrency = entity.TargetCurrency.Code,
             Rate = entity.Rate,
-            ValidUntil = entity.ValidUntilUtc.UtcDateTime
+            ValidUntil = entity.UpdatedAtUtc.UtcDateTime
         };
 
 

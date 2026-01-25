@@ -6,7 +6,8 @@ networks:
 
 volumes:
   postgres_data:
-  mongo_data:
+  mongo_catalog_data:
+  mongo_currency_data:
   elasticsearch_data:
   pgadmin_data:
   orderdb-data:
@@ -36,15 +37,32 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
+      - mongo_catalog_data:/data/db
     networks:
       - appnet
     healthcheck:
       test: ["CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\""]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 30s
+      retries: 10
+      start_period: 60s
+
+  currencydb:
+    image: mongo:latest
+    container_name: currencydb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_currency_data:/data/db
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
 
   discountdb:
     image: postgres:15
@@ -206,6 +224,24 @@ services:
     networks:
       - appnet
 
+  currency.api:
+    build:
+      context: .
+      dockerfile: src/Services/Currency/Currency.API/Dockerfile
+    container_name: currencyapi
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__MongoDb: mongodb://currencydb:27017
+      MongoDbSettings__CurrencyDb: CurrencyServiceDb
+    depends_on:
+      currencydb:
+        condition: service_healthy
+    ports:
+      - "8006:8080"
+    networks:
+      - appnet
+
   basket.api:
     build:
       context: .
@@ -261,41 +297,11 @@ services:
         Password=Passw0rd123!;
         TrustServerCertificate=True;
         Encrypt=False;
-        ConnectRetryCount=10;
-        ConnectRetryInterval=10
     depends_on:
       orderingdb:
         condition: service_healthy
     ports:
       - "8003:8080"
-    networks:
-      - appnet
-
-  identity.api:
-    build:
-      context: .
-      dockerfile: src/Services/Identity/Identity.API/Dockerfile
-    container_name: identityapi
-    restart: always
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__DefaultConnection: >
-        Server=identitydb,1433;
-        Database=IdentityDb;
-        User Id=sa;
-        Password=Passw0rd123!;
-        TrustServerCertificate=True;
-        Encrypt=False;
-        ConnectRetryCount=10;
-        ConnectRetryInterval=10
-      Jwt__Key: "super_secret_key_1234567890!@#$123"
-      Jwt__Issuer: ecommerce.identity
-      Jwt__Audience: ecommerce.clients
-    depends_on:
-      identitydb:
-        condition: service_healthy
-    ports:
-      - "8005:8080"
     networks:
       - appnet
 
@@ -316,6 +322,32 @@ services:
     networks:
       - appnet
 
+  identity.api:
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.API/Dockerfile
+    container_name: identityapi
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: >
+        Server=identitydb,1433;
+        Database=IdentityDb;
+        User Id=sa;
+        Password=Passw0rd123!;
+        TrustServerCertificate=True;
+        Encrypt=False;
+      Jwt__Key: "super_secret_key_1234567890!@#$123"
+      Jwt__Issuer: ecommerce.identity
+      Jwt__Audience: ecommerce.clients
+    depends_on:
+      identitydb:
+        condition: service_healthy
+    ports:
+      - "8005:8080"
+    networks:
+      - appnet
+
   apigateway:
     build:
       context: .
@@ -328,18 +360,13 @@ services:
       Jwt__Issuer: ecommerce.identity
       Jwt__Audience: ecommerce.clients
     depends_on:
-      catalog.api:
-        condition: service_healthy
-      basket.api:
-        condition: service_healthy
-      discount.api:
-        condition: service_healthy
-      ordering.api:
-        condition: service_healthy
-      identity.api:
-        condition: service_healthy
-      payment.api:
-        condition: service_healthy
+      - catalog.api
+      - basket.api
+      - discount.api
+      - ordering.api
+      - identity.api
+      - payment.api
+      - currency.api
     ports:
       - "8010:8080"
     networks:

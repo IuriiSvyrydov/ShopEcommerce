@@ -15,7 +15,7 @@ public class ExchangeRateApiProvider : ICurrencyRateProvider
     {
         if(baseCurrency.Equals(targetCurrency))
             return 1m;
-       var url =  $"https://api.exchangerate.host/latest?base={baseCurrency.Code}&symbols={targetCurrency.Code}";
+       var url = $"https://open.er-api.com/v6/latest/{baseCurrency.Code}";
        var response = await _httpClient.GetFromJsonAsync<ExchangeRateResponse>(url, ct);
          if (response is null || !response.Rates.TryGetValue(targetCurrency.Code, out var rate))
        

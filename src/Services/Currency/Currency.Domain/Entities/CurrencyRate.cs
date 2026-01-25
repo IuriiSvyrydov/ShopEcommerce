@@ -8,9 +8,9 @@ public sealed class CurrencyRate
     public ValueObjects.Currency BaseCurrency { get; }
     public ValueObjects.Currency TargetCurrency { get; }
     public decimal Rate { get; }
-    public DateTimeOffset ValidUntilUtc { get; }
+    public DateTimeOffset UpdatedAtUtc { get; }
 
-    public bool IsExpired => DateTimeOffset.UtcNow >= ValidUntilUtc;
+    public bool IsExpired => DateTimeOffset.UtcNow >= UpdatedAtUtc;
 
     public CurrencyRate(
         ValueObjects.Currency baseCurrency,
@@ -28,7 +28,7 @@ public sealed class CurrencyRate
         BaseCurrency = baseCurrency;
         TargetCurrency = targetCurrency;
         Rate = rate;
-        ValidUntilUtc = validUntilUtc;
+        UpdatedAtUtc = validUntilUtc;
     }
 
     // Создание нового курса

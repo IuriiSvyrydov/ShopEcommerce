@@ -42,5 +42,15 @@ namespace Currency.Application.Services
             return rateEntity;
         }
 
+        public async Task<CurrencyRate> RefreshRateAsync(Domain.ValueObjects.Currency baseCurrency, Domain.ValueObjects.Currency targetCurrency, CancellationToken ct = default)
+        {
+            var freshRateValue = await _rateProvider.GetRateAsync(baseCurrency, targetCurrency, ct);
+            var freshRate = new CurrencyRate(baseCurrency, targetCurrency, freshRateValue, DateTime.UtcNow);
+            //Save
+            var rateEntity = CurrencyRate.Create(baseCurrency, targetCurrency, freshRateValue, TimeSpan.FromHours(1));
+            await _currencyRateRepository.SaveAsync(rateEntity, ct);
+            return rateEntity;
+
+        }
     }
 }

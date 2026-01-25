@@ -1,14 +1,10 @@
-﻿
-
-namespace Currency.Infrastructure.Extensions;
+﻿namespace Currency.Infrastructure.Extensions;
 
 public static class AddInfrastructureLayer
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection RegisterInfrastructureLayer(this IServiceCollection services, IConfiguration configuration)
     {
-        // Register infrastructure services here
-        // e.g., database contexts, repositories, external API clients, etc.
-        // Example: Register a MongoDB client
+       
         services.AddSingleton<IMongoClient>(sp =>
         {
             var connectionString = configuration.GetConnectionString("MongoDb");

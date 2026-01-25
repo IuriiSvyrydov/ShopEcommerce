@@ -12,4 +12,6 @@ public interface ICurrencyService
         Domain.ValueObjects.Currency targetCurrency, CancellationToken ct = default);
     Task<CurrencyRate>GetRateAsync(Domain.ValueObjects.Currency baseCurrency, 
         Domain.ValueObjects.Currency targetCurrency, CancellationToken ct = default);
+    Task<CurrencyRate>RefreshRateAsync(Domain.ValueObjects.Currency baseCurrency, 
+        Domain.ValueObjects.Currency targetCurrency, CancellationToken ct = default);
 }

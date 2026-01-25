@@ -26,15 +26,23 @@ internal class CurrencyRateRepository : ICurrencyRateRepository
     {
         var doc = new CurrencyRateDocument
         {
-            Id = rate.Id,
+            // Генерируем новый Id, если его ещё нет
+            Id = rate.Id == Guid.Empty ? Guid.NewGuid() : rate.Id,
             BaseCurrency = rate.BaseCurrency.Code,
             TargetCurrency = rate.TargetCurrency.Code,
             Rate = rate.Rate,
-            ValidUntil = rate.ValidUntilUtc.UtcDateTime
+            ValidUntil = rate.UpdatedAtUtc.UtcDateTime
         };
-        var filter = Builders<CurrencyRateDocument>.Filter.Where(x=>
-        x.BaseCurrency==rate.BaseCurrency.Code &&
-        x.TargetCurrency==rate.TargetCurrency.Code);
-        await _collection.ReplaceOneAsync(filter, doc, new ReplaceOptions { IsUpsert = true }, ct);
+
+        // Upsert по Id (надежнее для сериализации Guid)
+        var filter = Builders<CurrencyRateDocument>.Filter.Eq(x => x.Id, doc.Id);
+
+        await _collection.ReplaceOneAsync(
+            filter,
+            doc,
+            new ReplaceOptions { IsUpsert = true },
+            ct
+        );
     }
+
 }

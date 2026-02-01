@@ -1,10 +1,16 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  computed
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import { ProductService } from '../services/product.service';
 import { BasketService } from '../services/basket.service';
 import { Product } from '../models/Product';
+import { CurrencyService } from '../../core/services/currency.service';
 
 @Component({
   selector: 'app-product-details',
@@ -13,29 +19,44 @@ import { Product } from '../models/Product';
   templateUrl: './product-details.html',
   styleUrls: ['./product-details.scss']
 })
-export class ProductDetails implements OnInit {
+export class ProductDetails {
+
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
   private basketService = inject(BasketService);
+  private currencyService = inject(CurrencyService);
 
+  /** товар */
   product = signal<Product | null>(null);
 
-  ngOnInit(): void {
+  /** выбранная валюта */
+  currency = this.currencyService.selectedCurrency;
+
+  /** курс: 1 EUR = X UAH */
+  rate = this.currencyService.rate;
+
+  /** ✅ РЕАКТИВНЫЙ ПЕРЕСЧЁТ ЦЕНЫ */
+  convertedPrice = computed(() => {
+    const p = this.product();
+    if (!p) return '';
+
+    // price в UAH → делим на курс
+    return (p.price / this.rate()).toFixed(2);
+  });
+
+
+  constructor() {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-      if (id) {
-        this.productService.getProductById(id).subscribe({
-          next: res => this.product.set(res),
-          error: err => console.error('Failed to load product details', err)
-        });
-      }
+      if (!id) return;
+
+      this.productService
+        .getProductById(id)
+        .subscribe(p => this.product.set(p));
     });
   }
 
   addToCart(p: Product) {
-    this.basketService.addToCart(p).subscribe({
-      next: res => console.log('Basket updated', res),
-      error: err => console.error('Error updating basket', err)
-    });
+    this.basketService.addToCart(p).subscribe();
   }
 }

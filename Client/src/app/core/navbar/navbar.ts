@@ -1,10 +1,12 @@
-import {Component, Inject, inject} from '@angular/core';
+import {Component, Inject, inject, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {Router, RouterLink, RouterModule} from '@angular/router';
 
 import { BasketService } from '../../store/services/basket.service';
 import { AuthService } from '../../core/services/auth.service';
+import {CurrencyService} from '../services/currency.service';
+
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +17,9 @@ import { AuthService } from '../../core/services/auth.service';
 })
 export class NavbarComponent {
   private basketService = inject(BasketService);
+  private currencyService = inject(CurrencyService);
+  selectedCurrencies = this.currencyService.selectedCurrency;
+  currencies = this.currencyService.currencies;
   auth = inject(AuthService);
   isAuthReady = this.auth.isAuthReady;
   isLoggedIn = this.auth.isLoggedIn;
@@ -24,7 +29,9 @@ export class NavbarComponent {
 
   searchText = '';
 
-
+  changeCurrency(code:string){
+    this.currencyService.setCurrency(code as any);
+  }
 
   get cartCount() {
     return this.basketService.basketCount();
@@ -38,5 +45,6 @@ export class NavbarComponent {
     const term = this.searchText.trim();
     this.router.navigate(['/store'], term ? { queryParams: { search: term } } : {});
   }
+
 }
 

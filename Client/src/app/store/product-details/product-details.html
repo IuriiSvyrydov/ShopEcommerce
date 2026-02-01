@@ -16,7 +16,7 @@
     <div class="details-info">
       <h2>{{p.name}}</h2>
       <p class="brand"> {{p.brand?.name}}-{{p.type.name || 'Unknown Type'}}</p>
-      <p class="price">{{p.price}}</p>
+      <p class="price">{{convertedPrice()}} {{currency()}}</p>
       <p class="desc">{{p.description}}</p>
       <div class="actions">
         <button class="btn-cart" (click)="addToCart(p)"><i class="fa fa-shopping-cart"></i> Add to Cart</button>

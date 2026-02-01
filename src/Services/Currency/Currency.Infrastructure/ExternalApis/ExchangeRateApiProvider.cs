@@ -10,18 +10,26 @@ public class ExchangeRateApiProvider : ICurrencyRateProvider
     {
         _httpClient = httpClient;
     }
-    public async Task<decimal> GetRateAsync(Domain.ValueObjects.Currency baseCurrency, 
-        Domain.ValueObjects.Currency targetCurrency, CancellationToken ct = default)
+    public async Task<decimal> GetRateAsync(
+     Domain.ValueObjects.Currency baseCurrency,
+     Domain.ValueObjects.Currency targetCurrency,
+     CancellationToken ct = default)
     {
-        if(baseCurrency.Equals(targetCurrency))
+        if (baseCurrency.Equals(targetCurrency))
             return 1m;
-       var url = $"https://open.er-api.com/v6/latest/{baseCurrency.Code}";
-       var response = await _httpClient.GetFromJsonAsync<ExchangeRateResponse>(url, ct);
-         if (response is null || !response.Rates.TryGetValue(targetCurrency.Code, out var rate))
-       
-          throw new InvalidOperationException("Failed to fetch currency rate");
-         return rate;
+
+        // Всегда берём курс из UAH
+        var url = $"https://open.er-api.com/v6/latest/UAH";
+        var response = await _httpClient.GetFromJsonAsync<ExchangeRateResponse>(url, ct);
+
+        if (response is null ||
+            !response.Rates.TryGetValue(targetCurrency.Code, out var uahToTarget))
+            throw new InvalidOperationException("Failed to fetch currency rate");
+
+
+        return 1m / uahToTarget;
     }
+
     private class ExchangeRateResponse
     {
      

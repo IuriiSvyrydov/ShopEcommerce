@@ -17,5 +17,11 @@
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
+  },
+  "/Currency": {
+    "target": "http://localhost:8010",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
 }

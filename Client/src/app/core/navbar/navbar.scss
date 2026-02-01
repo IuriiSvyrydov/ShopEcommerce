@@ -152,5 +152,10 @@
       flex-direction: column;
       cursor: pointer;
     }
+    .navbar__currency select {
+      font-size: 14px;
+      padding: 4px 8px;
+    }
+
   }
 }

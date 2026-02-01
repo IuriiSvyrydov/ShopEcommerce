@@ -1,4 +1,5 @@
 <nav class="navbar">
+
   <!-- LEFT -->
   <div class="navbar__left">
     <a routerLink="/" class="navbar__logo">Amazon</a>
@@ -28,14 +29,26 @@
   <!-- RIGHT -->
   <div class="navbar__right">
 
-    <!-- AUTH BLOCK -->
+    <!-- CURRENCY -->
+    <div class="navbar__currency">
+      <select
+        [ngModel]="selectedCurrencies()"
+        (ngModelChange)="changeCurrency($event)"
+      >
+        <option *ngFor="let c of currencies" [value]="c">
+          {{ c }}
+        </option>
+      </select>
+
+    </div>
+
+    <!-- AUTH -->
     <ng-container *ngIf="isAuthReady(); else loading">
-      <ng-container *ngIf="isLoggedIn(); else guest">
 
       <!-- LOGGED IN -->
       <div class="navbar__dropdown" *ngIf="isLoggedIn(); else guest">
         <span class="navbar__link">
-          Hello, {{ auth.isLoggedIn() ? auth.user()?.firstName : 'Guest' }}<br />
+          Hello, {{ auth.user()?.firstName }}<br />
           <span>
             Account & Lists
             <i class="fa-solid fa-caret-down"></i>
@@ -50,8 +63,6 @@
       </div>
 
     </ng-container>
-      </ng-container>
-
 
     <!-- GUEST -->
     <ng-template #guest>
@@ -73,9 +84,7 @@
 
     <!-- LOADING -->
     <ng-template #loading>
-      <div class="navbar__dropdown">
-        <span class="navbar__link">Loading...</span>
-      </div>
+      <span class="navbar__link">Loading...</span>
     </ng-template>
 
     <!-- ORDERS -->
@@ -92,10 +101,7 @@
     >
       <i class="fa-solid fa-cart-shopping"></i>
       Cart
-      <span
-        *ngIf="cartCount > 0"
-        class="navbar__cart-badge"
-      >
+      <span *ngIf="cartCount > 0" class="navbar__cart-badge">
         {{ cartCount }}
       </span>
     </a>

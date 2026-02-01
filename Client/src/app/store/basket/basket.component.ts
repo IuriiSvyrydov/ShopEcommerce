@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { BasketService } from '../services/basket.service';
-import { Basket, BasketItem } from '../models/Basket';
+import { BasketItem } from '../models/Basket';
+import { CurrencyService } from '../../core/services/currency.service';
 
 @Component({
   selector: 'app-basket',
@@ -13,12 +14,24 @@ import { Basket, BasketItem } from '../models/Basket';
 })
 export class BasketComponent implements OnInit {
   private basketService = inject(BasketService);
+  private currencyService = inject(CurrencyService);
 
-  basket = this.basketService.basket;  // Используем сигнал из сервиса
+  basket = this.basketService.basket;
+  currency = this.currencyService.selectedCurrency;
+  rate = this.currencyService.rate;
 
-  get cartCount() {
-    return this.basketService.basketCount();
-  }
+  /** Список доступных валют для селекта */
+  currencies = this.currencyService.currencies;
+
+  /** Пересчитанная итоговая сумма */
+  totalPrice = computed(() => {
+    const b = this.basket();
+    if (!b) return 0;
+    return (b.items.reduce((sum, item) => sum + item.price * item.quantity, 0) / this.rate()).toFixed(2);
+  });
+
+  /** Пересчитанная цена для конкретного товара */
+  itemPrice = (item: BasketItem) => computed(() => (item.price / this.rate()).toFixed(2));
 
   ngOnInit(): void {
     this.basketService.getBasket().subscribe();
@@ -35,16 +48,17 @@ export class BasketComponent implements OnInit {
   removeItem(item: BasketItem) {
     this.basketService.removeItem(item.productId).subscribe();
   }
-  checkout(){
 
-
+  checkout() {
+    if (!this.basket()?.items.length) {
       alert('Корзина пуста');
       return;
-
-
-    // TODO: подключить OrderService для создания заказа
-
-
+    }
+    alert('TODO: подключить OrderService для создания заказа');
   }
 
+  /** Метод смены валюты */
+  changeCurrency(code: string) {
+    this.currencyService.setCurrency(code as any);
+  }
 }

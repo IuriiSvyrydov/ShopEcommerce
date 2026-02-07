@@ -2,20 +2,18 @@
 namespace Ordering.Application.DTO;
 
 public record OrderDTO(
-    int Id,
+    Guid Id,
     string UserName,
-    decimal TotalPrice,
     string FirstName,
     string LastName,
+    decimal TotalPrice,
     string EmailAddress,
     string AddressLine,
     string Country,
     string State,
     string ZipCode,
-    string CardName,
-    string CardNumber,
-    string Expiration,
-    string CVV,
-    int PaymentMethod
+    int PaymentMethod,
+    string Currency,
+    OrderStatus OrderStatus
     );
 

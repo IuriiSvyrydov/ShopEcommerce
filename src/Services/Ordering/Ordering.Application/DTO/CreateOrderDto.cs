@@ -14,8 +14,7 @@ public record CreateOrderDto(
     string State,
     string ZipCode,
     string CardName,
-    string CardNumber,
     string Expiration,
-    string CVV,
-    int PaymentMethod);
+    int PaymentMethod,
+    string Currency);
 

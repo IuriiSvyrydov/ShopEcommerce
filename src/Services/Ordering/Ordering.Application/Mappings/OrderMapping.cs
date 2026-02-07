@@ -1,31 +1,33 @@
-﻿
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Ordering.Application.Mappings;
 
 public static class OrderMapping
 {
-    public static OrderDTO ToDtos(this Order orders)
-    => new OrderDTO(
-        orders.Id,
-        orders.UserName,
-        orders.TotalPrice,
-        orders.FirstName,
-        orders.LastName,
-        orders.EmailAddress,
-        orders.AddressLine,
-        orders.Country,
-        orders.State,
-        orders.ZipCode,
-        orders.CardName,
-        orders.CardNumber,
-        orders.Expiration,
-        orders.CVV,
-        orders.PaymentMethod
+    /* ===================== ENTITY → DTO ===================== */
+
+    public static OrderDTO ToDto(this Order order)
+        => new(
+            order.Id,
+            order.UserName,
+            order.FirstName,
+            order.LastName,
+            order.TotalPrice,
+            order.EmailAddress,
+            order.AddressLine,
+            order.Country,
+            order.State,
+            order.ZipCode,
+            order.PaymentMethod,
+            order.Currency,
+            order.OrderStatus
+            
         );
+
+    /* ===================== COMMAND → ENTITY ===================== */
+
     public static Order ToEntity(this CheckoutOrderCommand command)
-        => new Order
+        => new()
         {
             UserName = command.UserName,
             TotalPrice = command.TotalPrice,
@@ -36,35 +38,32 @@ public static class OrderMapping
             Country = command.Country,
             State = command.State,
             ZipCode = command.ZipCode,
-            CardName = command.CardName,
-            CardNumber = command.CardNumber,
-            Expiration = command.Expiration,
-            CVV = command.CVV,
-            PaymentMethod = command.PaymentMethod
+            PaymentMethod = command.PaymentMethod,
+            Currency = command.Currency,
+            OrderStatus = OrderStatus.Pending
         };
+
+    /* ===================== UPDATE ===================== */
+
     public static void MapUpdateOrder(this Order order, UpdateOrderCommand command)
-        => new Order
-        {
-            Id = command.Id,
-            UserName = command.UserName,
-            TotalPrice = command.TotalPrice,
-            FirstName = command.FirstName,
-            LastName = command.LastName,
-            EmailAddress = command.EmailAddress,
-            AddressLine = command.AddressLine,
-            Country = command.Country,
-            State = command.State,
-            ZipCode = command.ZipCode,
-            CardName = command.CardName,
-            CardNumber = command.CardNumber,
-            Expiration = command.Expiration,
-            CVV = command.CVV,
-            PaymentMethod = command.PaymentMethod
-        };
+    {
+        order.UserName = command.UserName;
+        order.TotalPrice = command.TotalPrice;
+        order.FirstName = command.FirstName;
+        order.LastName = command.LastName;
+        order.EmailAddress = command.EmailAddress;
+        order.AddressLine = command.AddressLine;
+        order.Country = command.Country;
+        order.State = command.State;
+        order.ZipCode = command.ZipCode;
+        order.PaymentMethod = command.PaymentMethod;
+    }
+
+    /* ===================== DTO → COMMAND ===================== */
+
     public static CheckoutOrderCommand ToCommand(this CreateOrderDto dto)
-        => new CheckoutOrderCommand
+        => new()
         {
-          
             UserName = dto.UserName,
             TotalPrice = dto.TotalPrice,
             FirstName = dto.FirstName,
@@ -75,13 +74,12 @@ public static class OrderMapping
             State = dto.State,
             ZipCode = dto.ZipCode,
             CardName = dto.CardName,
-            CardNumber = dto.CardNumber,
-            Expiration = dto.Expiration,
-            CVV = dto.CVV,
-            PaymentMethod = dto.PaymentMethod
+            PaymentMethod = dto.PaymentMethod,
+            Currency = dto.Currency
         };
+
     public static UpdateOrderCommand ToCommand(this OrderDTO dto)
-        => new UpdateOrderCommand
+        => new()
         {
             Id = dto.Id,
             UserName = dto.UserName,
@@ -93,19 +91,16 @@ public static class OrderMapping
             Country = dto.Country,
             State = dto.State,
             ZipCode = dto.ZipCode,
-            CardName = dto.CardName,
-            CardNumber = dto.CardNumber,
-            Expiration = dto.Expiration,
-            CVV = dto.CVV,
-            PaymentMethod = dto.PaymentMethod,
-            
+         
+            PaymentMethod = dto.PaymentMethod
         };
+
+    /* ===================== BASKET EVENT ===================== */
     public static CheckoutOrderCommand ToCheckoutOrderCommand(this BasketCheckoutEvent message)
-    {
-        return new()
+        => new()
         {
-            UserName = message.UserName,
-            TotalPrice = (decimal)message.TotalPrice,
+            UserName = message.UserId,          // ← UserId используем как UserName
+            TotalPrice = message.TotalPrice,
             FirstName = message.FirstName,
             LastName = message.LastName,
             EmailAddress = message.EmailAddress,
@@ -113,71 +108,42 @@ public static class OrderMapping
             Country = message.Country,
             State = message.State,
             ZipCode = message.ZipCode,
-            CardName = message.CardName,
-            CardNumber = message.CardNumber,
-            Expiration = message.Expiration,
-            CVV = message.Cvv,
-            PaymentMethod = int.TryParse(message.PaymentMethod, out var method) ? method : 0
+            PaymentMethod = message.PaymentMethod,
+            Currency = message.Currency,
+            CorrelationId = message.CorrelationId
         };
-       
-    }
-    public static OutboxMessage ToOutboxMessage(Order order, Guid correlationId)
-    {
-        return new OutboxMessage
+
+   
+
+    /* ===================== OUTBOX ===================== */
+
+    public static OutboxMessage ToOrderCreatedOutboxMessage(Order order, Guid correlationId)
+        => new()
         {
             CorrelationId = correlationId.ToString(),
             Type = OutboxMessageTypes.OrderCreated,
             OccurredOn = DateTime.UtcNow,
             Content = JsonConvert.SerializeObject(new
             {
-                order.Id,
+                OrderId = order.Id,
                 order.UserName,
                 order.TotalPrice,
-                order.FirstName,
-                order.LastName,
-                order.EmailAddress,
-                order.AddressLine,
-                order.Country,
-                order.State,
-                order.ZipCode,
-                order.CardName,
-                order.CardNumber,
-                order.Expiration,
-                order.CVV,
+                order.Currency,
                 order.PaymentMethod,
                 order.OrderStatus
             })
-        };       
-        
-    }
+        };
 
-    public static OutboxMessage ToOutboxMessageForUpdate(Order order, Guid correlationId)
-    {
-        return new OutboxMessage
+    public static OutboxMessage ToOrderUpdatedOutboxMessage(Order order, Guid correlationId)
+        => new()
         {
             CorrelationId = correlationId.ToString(),
             Type = OutboxMessageTypes.OrderCreated,
             OccurredOn = DateTime.UtcNow,
             Content = JsonConvert.SerializeObject(new
-                {
-                    order.Id,
-                    order.UserName,
-                    order.TotalPrice,
-                    order.FirstName,
-                    order.LastName,
-                    order.EmailAddress,
-                    order.AddressLine,
-                    order.Country,
-                    order.State,
-                    order.ZipCode,
-                    order.CardName,
-                    order.CardNumber,
-                    order.Expiration,
-                    order.CVV,
-                    order.PaymentMethod,
-                    order.OrderStatus
-
-                })
+            {
+                OrderId = order.Id,
+                order.OrderStatus
+            })
         };
-    }
 }

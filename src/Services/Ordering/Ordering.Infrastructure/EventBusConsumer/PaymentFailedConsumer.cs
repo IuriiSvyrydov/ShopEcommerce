@@ -1,10 +1,5 @@
 ﻿
 
-using Infrastructure.Messages.Events;
-using MassTransit;
-using Microsoft.Extensions.Logging;
-using Ordering.Domain.Entities;
-
 namespace Ordering.Infrastructure.EventBusConsumer;
 
 public class PaymentFailedConsumer : IConsumer<PaymentFailedEvent>

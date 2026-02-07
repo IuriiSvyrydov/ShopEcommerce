@@ -30,11 +30,9 @@ public class OrderContextSeed
                 TotalPrice = 350,
                 State = "NY",
                 ZipCode = "10001",
-                CardName = "Test User",
-                CardNumber = "1234567890123456",
+              
                 CreatedBy = "system",
-                Expiration = "12/25",
-                CVV = "123",
+             
                 PaymentMethod = 1,
               
 

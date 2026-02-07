@@ -49,6 +49,7 @@
     <Project Path="D:/Projects/ShopEcommerce/src/Services/Payment/Payment.API/Payment.API.csproj" Id="8e5367f8-9b6e-4846-a5a3-d93bf8746708" />
     <Project Path="D:/Projects/ShopEcommerce/src/Services/Payment/Payment.Infrastructure/Payment.Infrastructure.csproj" Id="8322b91f-7631-4dbe-8efb-c18cb77fff08" />
     <Project Path="src/Services/Payment/Payment.Application/Payment.Application.csproj" Id="4ea7b860-8b24-476c-a141-8a64bbea617e" />
+    <Project Path="src/Services/Payment/Payment.Domain/Payment.Domain.csproj" Id="6cf53cf1-6723-4843-bb2e-ce1e655c63da" />
   </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />

@@ -39,7 +39,7 @@ public class RepositoryBase<T> : IAsyncRepository<T> where T : BaseEntity
 
     }
 
-    public async Task<T?> GetByIdAsync(int id)
+    public async Task<T?> GetByIdAsync(Guid id)
     {
         return await _dbContext.Set<T>().AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
     }

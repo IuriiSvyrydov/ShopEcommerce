@@ -1,10 +1,9 @@
-﻿
-namespace Basket.Application.Mapping;
+﻿namespace Basket.Application.Mapping;
 
 public static class BasketMapper
 {
     public static ShoppingCartResponse ToResponse(this ShoppingCart shoppingCart) =>
-        new ShoppingCartResponse
+        new()
         {
             UserName = shoppingCart.UserName,
             Items = shoppingCart.Items.Select(item => new ShoppingCartItemResponse
@@ -15,7 +14,6 @@ public static class BasketMapper
                 ProductId = item.ProductId,
                 ProductName = item.ProductName
             }).ToList(),
-
         };
 
     public static ShoppingCart ToEntity(this CreateShoppingCartCommand command) =>
@@ -31,9 +29,12 @@ public static class BasketMapper
                 ProductName = item.ProductName
             }).ToList(),
         };
+
     public static ShoppingCart ToEntity(this ShoppingCartResponse response) =>
         new()
         {
+            Id = Guid.NewGuid(),
+            UserId = response.UserName, // ⚠️ временно, лучше потом брать из токена
             UserName = response.UserName,
             Items = response.Items.Select(item => new ShoppingCartItem
             {
@@ -44,22 +45,31 @@ public static class BasketMapper
                 ProductName = item.ProductName
             }).ToList(),
         };
-    public static BasketCheckoutEvent ToBasketCheckoutEvent(this BasketCheckoutDto dto, ShoppingCart basket) =>
+
+
+    public static BasketCheckoutEvent ToBasketCheckoutEvent(
+        this BasketCheckoutDto dto,
+        ShoppingCart basket,
+        Guid correlationId) =>
         new()
         {
-            UserName = dto.UserName,
+            BasketId = basket.Id,
+            UserId = basket.UserName, // или отдельный UserId если есть
+
             TotalPrice = dto.TotalPrice,
+            Currency = dto.Currency,
+
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             EmailAddress = dto.EmailAddress,
+
             AddressLine = dto.AddressLine,
             Country = dto.Country,
             State = dto.State,
             ZipCode = dto.ZipCode,
-            CardName = dto.CardName,
-            CardNumber = dto.CardNumber,
-            Expiration = dto.Expiration,
-            Cvv = dto.Cvv,
-            PaymentMethod = dto.PaymentMethod
+
+            PaymentMethod = dto.PaymentMethod,
+
+            CorrelationId = correlationId
         };
 }

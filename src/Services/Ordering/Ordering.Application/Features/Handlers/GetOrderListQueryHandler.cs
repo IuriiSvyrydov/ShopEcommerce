@@ -13,7 +13,7 @@ public sealed class GetOrderListQueryHandler : IRequestHandler<GetOrderListQuery
     public async Task<List<OrderDTO>> Handle(GetOrderListQuery request, CancellationToken cancellationToken)
     {
         var orders = await _orderRepository.GetOrdersByUserName(request.UserName);
-        return orders.Select(order => order.ToDtos()).ToList();
+        return orders.Select(order => order.ToDto()).ToList();
 
     }
 }

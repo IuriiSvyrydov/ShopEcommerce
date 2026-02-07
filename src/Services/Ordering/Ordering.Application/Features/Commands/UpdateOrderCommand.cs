@@ -1,24 +1,30 @@
-﻿
+﻿using Ordering.Domain.Enums;
+
 namespace Ordering.Application.Features.Commands;
-public record UpdateOrderCommand :IRequest<Unit>
+
+public record UpdateOrderCommand : IRequest<Unit>
 {
+    public Guid Id { get; init; }
 
-    public int Id { get; set; }
-    public string? UserName { get; set; }
-    public decimal TotalPrice { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public string? EmailAddress { get; set; }
-    public string? AddressLine { get; set; }
-    public string? Country { get; set; }
-    public string? State { get; set; }
-    public string? ZipCode { get; set; }
-    //payment
-    public string CardName { get; set; }
-    public string? CardNumber { get; set; }
+    // Customer
+    public string UserName { get; init; } = default!;
+    public string FirstName { get; init; } = default!;
+    public string LastName { get; init; } = default!;
+    public string EmailAddress { get; init; } = default!;
 
-    public string? Expiration { get; set; }
-    public string? CVV { get; set; }
-    public int PaymentMethod { get; set; }
+    // Shipping
+    public string AddressLine { get; init; } = default!;
+    public string Country { get; init; } = default!;
+    public string State { get; init; } = default!;
+    public string ZipCode { get; init; } = default!;
+
+    // Order
+    public decimal TotalPrice { get; init; }
+    public int PaymentMethod { get; init; }
+
+    // Optional lifecycle updates
+    public OrderStatus? OrderStatus { get; init; }
+    public PaymentStatus? PaymentStatus { get; init; }
+
     public Guid CorrelationId { get; set; }
 }

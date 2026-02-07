@@ -1,6 +1,4 @@
-﻿
-
-using Infrastructure.Messages.Events;
+﻿using Infrastructure.Messages.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -8,41 +6,77 @@ namespace Payment.Infrastructure.Consumers;
 
 public class OrderCreatedConsumer : IConsumer<OrderCreatedEvent>
 {
-    private readonly IPublishEndpoint _endpoint;
+    private readonly IPaymentService _paymentService;
     private readonly ILogger<OrderCreatedConsumer> _logger;
 
-    public OrderCreatedConsumer(IPublishEndpoint endpoint, ILogger<OrderCreatedConsumer>logger)
+    public OrderCreatedConsumer(IPaymentService paymentService, ILogger<OrderCreatedConsumer> logger)
     {
-        _endpoint = endpoint;
+        _paymentService = paymentService;
         _logger = logger;
     }
+
     public async Task Consume(ConsumeContext<OrderCreatedEvent> context)
     {
         var message = context.Message;
-        _logger.LogInformation($"Processing payment for Order Id {message.Id}");
-        await Task.Delay(1000);
-        if (message.TotalPrice > 0)
+        _logger.LogInformation($"[Payment] Creating payment for Order Id: {message.Id}, Amount: {message.TotalPrice}");
+
+      
+        var payment = new Domain.Entities.Payment(
+            orderId: message.OrderId,
+            amount: message.TotalPrice,
+            currency: "UAH", // можно брать из Order
+            correlationId: context.CorrelationId ?? Guid.NewGuid()
+        );
+
+        // Сохраняем в БД
+        await _paymentService.AddPaymentAsync(payment);
+
+        try
         {
-            var completedEvent = new PaymentCompletedEvent
+            // Пытаемся обработать платёж через платежный шлюз
+            var result = await _paymentService.ProcessPaymentAsync(payment.OrderId, payment.Amount, payment.Currency);
+
+            if (result.Success)
             {
-                OrderId = message.Id,
-                CorrelationId = context.CorrelationId.Value
-            };
-            await _endpoint.Publish(completedEvent);
-            _logger.LogInformation($"Payment success for order id{message.Id} and CorrelationId: {context.CorrelationId}");
+                payment.MarkPaid(result.TransactionId);
+                await _paymentService.UpdatePaymentAsync(payment);
+
+                await context.Publish(new PaymentCompletedEvent
+                {
+                    OrderId = payment.OrderId,
+                    CorrelationId = payment.CorrelationId
+                });
+
+                _logger.LogInformation($"[Payment] Payment completed for Order Id: {payment.OrderId}");
+            }
+            else
+            {
+                payment.MarkFailed();
+                await _paymentService.UpdatePaymentAsync(payment);
+
+                await context.Publish(new PaymentFailedEvent
+                {
+                    OrderId = payment.OrderId,
+                    CorrelationId = payment.CorrelationId,
+                    Reason = result.ErrorMessage
+                });
+
+                _logger.LogWarning($"[Payment] Payment failed for Order Id: {payment.OrderId}, Reason: {result.ErrorMessage}");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var failEvent = new PaymentFailedEvent
+            payment.MarkFailed();
+            await _paymentService.UpdatePaymentAsync(payment);
+
+            await context.Publish(new PaymentFailedEvent
             {
-                OrderId = message.Id,
-                CorrelationId = context.CorrelationId.Value,
-                Reason = "Total price was zero or negative"
+                OrderId = payment.OrderId,
+                CorrelationId = payment.CorrelationId,
+                Reason = ex.Message
+            });
 
-            };
-            await _endpoint.Publish(failEvent);
-            _logger.LogInformation($"Payment failed for Order Id {message.Id} and CorrelationId: {context.CorrelationId}");
-
+            _logger.LogError(ex, $"[Payment] Exception processing payment for Order Id: {payment.OrderId}");
         }
     }
 }

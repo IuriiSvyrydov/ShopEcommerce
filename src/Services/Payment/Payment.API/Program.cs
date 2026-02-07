@@ -1,9 +1,3 @@
-using ApiGateway.Middleware;
-using Common.Logging;
-using Infrastructure.Messages.Common;
-using MassTransit;
-using Payment.Infrastructure.Consumers;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +20,7 @@ builder.Services.AddMassTransit(config =>
 builder.Host.UseSerilog(Logging.ConfigurationLogger);
 
 builder.Services.AddOpenApi();
+builder.Services.RegisterInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 app.UseMiddleware<CorrelationIdMiddleware>();

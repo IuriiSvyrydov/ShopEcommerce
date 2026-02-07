@@ -46,7 +46,7 @@ public class OrderController : ControllerBase
         return NoContent();
     }
     [HttpDelete("{id}", Name = "DeleteOrder")]
-    public async Task<ActionResult> DeleteOrder([FromRoute]int id)
+    public async Task<ActionResult> DeleteOrder([FromRoute]Guid id)
     {
         var correlationId = HttpContext.Request.Headers["x-correlation-id"]
             .FirstOrDefault()??Guid.NewGuid().ToString();

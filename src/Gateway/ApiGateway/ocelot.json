@@ -245,7 +245,7 @@
 
     {
       "UpstreamPathTemplate": "/Currency/convert",
-      "UpstreamHttpMethod": [ "POST" ],
+      "UpstreamHttpMethod": [ "GET" ],
       "DownstreamPathTemplate": "/api/v1/Currency/convert",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -255,7 +255,6 @@
         }
       ]
     },
-
     {
       "UpstreamPathTemplate": "/Currency/rate",
       "UpstreamHttpMethod": [ "GET" ],

@@ -1,4 +1,4 @@
-version: "3.9"
+
 
 networks:
   appnet:
@@ -12,6 +12,7 @@ volumes:
   pgadmin_data:
   orderdb-data:
   identitydb-data:
+  paymentdb-data:
 
 services:
   # ===================== DATABASES =====================
@@ -125,6 +126,26 @@ services:
       timeout: 10s
       retries: 15
       start_period: 180s
+  paymentdb:
+    image: postgres:15
+    container_name: paymentdb
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: PaymentDb
+    ports:
+      - "5434:5432"
+    volumes:
+      - paymentdb-data:/var/lib/postgresql/data
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   # ===================== INFRA =====================
 
@@ -250,6 +271,7 @@ services:
     restart: always
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+     # MT_LICENSE: ""
       ConnectionStrings__Redis: basketdb:6379
       EventBusSettings__HostAddress: amqp://guest:guest@rabbitmq:5672
     depends_on:
@@ -270,6 +292,7 @@ services:
     restart: always
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      # MT_LICENSE: ""
       DatabaseSettings__ConnectionString: Host=discountdb;Port=5432;Database=DiscountDb;User Id=postgres;Password=postgres
       EventBusSettings__HostAddress: amqp://guest:guest@rabbitmq:5672
     depends_on:
@@ -306,21 +329,26 @@ services:
       - appnet
 
   payment.api:
-    build:
-      context: .
-      dockerfile: src/Services/Payment/Payment.API/Dockerfile
-    container_name: paymentapi
-    restart: always
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      EventBusSettings__HostAddress: amqp://guest:guest@rabbitmq:5672
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    ports:
-      - "8004:8080"
-    networks:
-      - appnet
+   build:
+    context: .
+    dockerfile: src/Services/Payment/Payment.API/Dockerfile
+   container_name: paymentapi
+   restart: always
+   environment:
+    ASPNETCORE_ENVIRONMENT: Production
+    # MT_LICENSE: ""
+    EventBusSettings__HostAddress: amqp://guest:guest@rabbitmq:5672
+    DatabaseSettings__PaymentConnection: "Host=paymentdb;Port=5432;Database=PaymentDb;User Id=postgres;Password=postgres;"
+   depends_on:
+    paymentdb:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+   ports:
+    - "8004:8080"
+   networks:
+    - appnet
+
 
   identity.api:
     build:

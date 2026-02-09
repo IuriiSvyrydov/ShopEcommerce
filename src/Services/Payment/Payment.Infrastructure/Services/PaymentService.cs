@@ -32,9 +32,7 @@ public sealed class PaymentService : IPaymentService
             PaymentId = payment.Id,
             OrderId = payment.OrderId,
             Status = payment.Status
-
         };
-
     }
 
     public Task AddPaymentAsync(Domain.Entities.Payment payment, CancellationToken ct = default)
@@ -43,35 +41,49 @@ public sealed class PaymentService : IPaymentService
     public Task UpdatePaymentAsync(Domain.Entities.Payment payment, CancellationToken ct = default)
     => _paymentRepository.UpdateAsync(payment, ct);
 
-    public async  Task<PaymentResult> ProcessPaymentAsync(Guid orderId, decimal amount, string currency)
+    public async Task ProcessPaymentAsync(Guid orderId, CancellationToken ct = default)
     {
-        var payment = await _paymentRepository.GetByOrderIdAsync(orderId)
-                      ?? new Domain.Entities.Payment(orderId, amount, currency, Guid.NewGuid());
+        var payment = await _paymentRepository.GetByOrderIdAsync(orderId, ct);
+
+        if (payment == null)
+        {
+            // ❗️Тут ВАЖНО: amount/currency должны прийти из Order
+            throw new InvalidOperationException($"Payment not found for order {orderId}");
+        }
+
         payment.MarkProcessing();
-        await _paymentRepository.UpdateAsync(payment);
+        await _paymentRepository.UpdateAsync(payment, ct);
+
         PaymentResult result;
+
         try
         {
-            result = await _paymentGateway.ChargeAsync(orderId.ToString(), amount, currency);
-
+            result = await _paymentGateway.ChargeAsync(
+                orderId.ToString(),
+                payment.Amount,
+                payment.Currency
+            );
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
             payment.MarkFailed();
-            await _paymentRepository.UpdateAsync(payment);
+            await _paymentRepository.UpdateAsync(payment, ct);
+
             await _publishEndpoint.Publish(new PaymentFailedEvent
             {
                 OrderId = payment.OrderId,
                 CorrelationId = payment.CorrelationId.ToString(),
-                Reason = e.Message
+                Reason = ex.Message
             });
+
             throw;
         }
 
         if (result.Success)
         {
             payment.MarkPaid(result.TransactionId);
-            await _paymentRepository.UpdateAsync(payment);
+            await _paymentRepository.UpdateAsync(payment, ct);
+
             await _publishEndpoint.Publish(new PaymentCompletedEvent
             {
                 OrderId = payment.OrderId,
@@ -79,12 +91,12 @@ public sealed class PaymentService : IPaymentService
                 Currency = payment.Currency,
                 CorrelationId = payment.CorrelationId.ToString()
             });
-
         }
         else
         {
             payment.MarkFailed();
-            await _paymentRepository.UpdateAsync(payment);
+            await _paymentRepository.UpdateAsync(payment, ct);
+
             await _publishEndpoint.Publish(new PaymentFailedEvent
             {
                 OrderId = payment.OrderId,
@@ -92,6 +104,7 @@ public sealed class PaymentService : IPaymentService
                 Reason = result.ErrorMessage
             });
         }
-        return result;
     }
+
+  
 }

@@ -11,6 +11,7 @@ namespace Payment.Infrastructure.Extensions
             services.AddDbContext<PaymentDbContext>(opt=>opt.UseNpgsql(configuration.GetConnectionString("PaymentConnection")));
         /*-------------------Services-----------------------------------*/
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IPaymentGateway, PaymentGateway>();
             /*----------------Repositories=----------------------------*/
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             

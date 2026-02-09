@@ -22,13 +22,21 @@ builder.Services.AddGrpcClient<API.Grpc.Protos.DiscountProtoService.DiscountProt
   o.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]);
 });
 // Add Transient DI
-builder.Services.AddMassTransit(config =>
+builder.Services.AddMassTransit(cfg =>
 {
-  config.UsingRabbitMq((ctx, cfg) =>
-  {
-    cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
-  });
+    cfg.SetKebabCaseEndpointNameFormatter();
+
+    cfg.UsingRabbitMq((context, busCfg) =>
+    {
+        var host = builder.Configuration["EventBusSettings:HostAddress"];
+
+        if (string.IsNullOrWhiteSpace(host))
+            throw new InvalidOperationException("EventBusSettings:HostAddress is missing");
+
+        busCfg.Host(new Uri(host));
+    });
 });
+
 builder.Services.AddCors(options =>
 {
   options.AddPolicy("AllowFrontend", policy =>

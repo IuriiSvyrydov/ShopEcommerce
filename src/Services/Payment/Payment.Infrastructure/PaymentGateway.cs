@@ -2,7 +2,7 @@
 
 using Stripe;
 using Application.Contracts;
-
+using Payment.Application.Interfaces;
 
 public sealed class PaymentGateway : IPaymentGateway
 {
@@ -37,6 +37,11 @@ public sealed class PaymentGateway : IPaymentGateway
         {
             return PaymentResult.Fail(ex.Message);
         }
+    }
+
+    public Task RefundAsync(string providerPaymentId, string reason)
+    {
+        throw new NotImplementedException();
     }
 }
 

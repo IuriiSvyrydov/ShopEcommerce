@@ -4,5 +4,5 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Payment.Infrastructure.Persistence;
 global using Payment.Infrastructure.Services;
 global using Payment.Application.Events;
-global using Payment.Infrastructure.Interfaces;
+
 global using Stripe;

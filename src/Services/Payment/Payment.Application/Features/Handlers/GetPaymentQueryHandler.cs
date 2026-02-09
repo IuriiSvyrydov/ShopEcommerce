@@ -1,22 +1,24 @@
 ﻿
-
-
-using Payment.Application.Events;
-using Payment.Application.Interfaces;
+using Payment.Application.Mappings;
 
 namespace Payment.Application.Features.Handlers;
 
 public sealed class GetPaymentQueryHandler : IRequestHandler<GetPaymentByIdQuery, PaymentDto>
 {
-    private readonly IPaymentService _paymentService;
+  
     private readonly IPaymentRepository _paymentRepository;
-    public GetPaymentQueryHandler(IPaymentService paymentService, IPaymentRepository paymentRepository)
+    public GetPaymentQueryHandler( IPaymentRepository paymentRepository)
     {
-        _paymentService = paymentService;
+        
         _paymentRepository = paymentRepository;
     }
-    public Task<PaymentDto> Handle(GetPaymentByIdQuery request, CancellationToken cancellationToken)
+    public async Task<PaymentDto> Handle(GetPaymentByIdQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var payment = await _paymentRepository.GetByIdAsync(request.PaymentId,cancellationToken);
+        if (payment == null)
+        {
+            throw new InvalidOperationException($"Payment with ID {request.PaymentId} not found.");
+        }
+        return payment.ToDto();
     }
 }

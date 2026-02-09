@@ -23,5 +23,12 @@
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
+  },
+  "/Payment": {
+    "target": "http://localhost:8010",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
   }
+  
 }

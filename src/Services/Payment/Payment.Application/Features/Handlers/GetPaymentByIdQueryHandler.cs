@@ -1,7 +1,4 @@
-﻿
-
-
-using Payment.Application.Interfaces;
+﻿using Payment.Application.Interfaces;
 using Payment.Application.Mappings;
 
 namespace Payment.Application.Features.Handlers;

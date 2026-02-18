@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { PaymentDto } from '../../store/models/Payment/PaymentDto';
+import { PaymentDto } from '../models/Payment/PaymentDto';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,7 @@ export class PaymentService {
   private readonly apiUrl = '/Payment';
 
   // STATE
-  payment = signal<PaymentDto | null>(null);
+   public payment = signal<PaymentDto | null>(null);
   loading = signal(false);
   error = signal<string | null>(null);
 
@@ -20,7 +20,7 @@ export class PaymentService {
     this.error.set(null);
 
     this.http
-      .get<PaymentDto>(`${this.apiUrl}/status/${orderId}`)
+      .get<PaymentDto>(`${this.apiUrl}/order/${orderId}`)
       .subscribe({
         next: payment => {
           this.payment.set(payment);
@@ -32,15 +32,15 @@ export class PaymentService {
         }
       });
   }
-
-  checkout(orderId: string) {
+  processPayment(orderId: string, amount: number, currency: string) {
     this.loading.set(true);
-
-    return this.http.post<void>(`${this.apiUrl}/checkout`, { orderId });
+    this.error.set(null);
+    return this.http.post<void>(`${this.apiUrl}/process`, { orderId, amount, currency });
   }
 
   clear() {
     this.payment.set(null);
     this.error.set(null);
+    this.loading.set(false);
   }
 }

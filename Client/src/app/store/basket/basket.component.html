@@ -39,10 +39,36 @@
           }
         </tbody>
       </table>
-      <div class="basket-summary">
+      <form [formGroup]="checkoutForm" (ngSubmit)="checkout()" class="checkout-form">
+
+  <div class="form-grid">
+    <input placeholder="First Name" formControlName="firstName" />
+    <input placeholder="Last Name" formControlName="lastName" />
+    <input placeholder="Email" formControlName="email" />
+    <input placeholder="Address" formControlName="address" />
+    <input placeholder="Country" formControlName="country" />
+    <input placeholder="State" formControlName="state" />
+    <input placeholder="Zip Code" formControlName="zipCode" />
+
+    <select formControlName="paymentMethod">
+      <option [value]="1">Card</option>
+      <option [value]="2">PayPal</option>
+    </select>
+  </div>
+
+  <div class="basket-summary">
+    <h3>Total: {{totalPrice()}} {{currency()}}</h3>
+
+    <button type="submit" class="btn-checkout">
+      Proceed to checkout
+    </button>
+  </div>
+
+</form>
+    <!--  <div class="basket-summary">
         <h3>Total: {{totalPrice()}} {{currency()}}</h3>
         <button class="btn-checkout" (click)="checkout()">Proceed to checkout</button>
-      </div>
+      </div> -->
     }
   </div>
 }

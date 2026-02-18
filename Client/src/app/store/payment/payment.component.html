@@ -1,0 +1,46 @@
+<div class="payment-card">
+
+  <h2 class="title">Payment Method</h2>
+
+  <!-- LOADING -->
+  <div *ngIf="paymentService.loading()" class="loading">
+    Processing your payment…
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="paymentService.error()" class="error">
+    {{ paymentService.error() }}
+  </div>
+
+  <!-- PAYMENT DATA -->
+  <ng-container *ngIf="paymentService.payment() as payment">
+
+    <!-- AMOUNT -->
+    <div class="amount-box">
+      <span>Total</span>
+      <strong>
+        {{ payment.amount | number:'1.2-2' }} {{ payment.currency }}
+      </strong>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status" [attr.data-status]="payment.status">
+      Status: <strong>{{ payment.status }}</strong>
+    </div>
+
+    <!-- PAY BUTTON -->
+    <button
+  class="pay-btn"
+  [disabled]="paymentService.loading() || payment.status === 'Paid'"
+  (click)="pay()">
+  {{ payment.status === 'Paid' ? 'Paid' : 'Pay now' }}
+</button>
+
+  </ng-container>
+
+  <!-- AMAZON NOTE -->
+  <p class="secure-note">
+    🔒 Secure transaction. Your payment information is encrypted.
+  </p>
+
+</div>

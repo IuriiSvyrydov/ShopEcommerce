@@ -1,7 +1,4 @@
 ﻿
-
-using Identity.Domain.Entities;
-
 namespace Identity.Infrastructure.Services;
 
 public class TokenService: ITokenService
@@ -22,6 +19,7 @@ public class TokenService: ITokenService
     {
         var claims = new List<Claim>
         {
+            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
             new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
             new Claim(ClaimTypes.Email, email),
             new Claim("firstName", firstName),

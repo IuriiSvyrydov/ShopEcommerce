@@ -10,7 +10,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProductService } from '../services/product.service';
 import { BasketService } from '../services/basket.service';
 import { Product } from '../models/Product';
-import { CurrencyService } from '../../core/services/currency.service';
+import { CurrencyService } from '../services/currency.service';
 
 @Component({
   selector: 'app-product-details',

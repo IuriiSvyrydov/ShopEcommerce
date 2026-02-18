@@ -46,7 +46,18 @@ public class AuthController : ControllerBase
             var result = await _mediator.Send(new LoginUserCommand(
                 loginDto.Email,
                 loginDto.Password));
-            return Ok(result);
+            Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = result.Expiration.AddDays(7) // Устанавливаем срок действия refresh токена
+            });
+            return Ok(new
+            {
+                accessToken = result.AccessToken,
+                expiresIn = result.Expiration
+            });
         }
         catch (IdentityException)
         {
@@ -55,10 +66,10 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh-token")]
-    public async Task<IActionResult> RefreshToken()
+    public async Task<IActionResult> RefreshToken([FromBody]RefreshTokenRequestDto requestDto)
     {
         
-            var result = await _mediator.Send(new RefreshTokenCommand());
+            var result = await _mediator.Send(new RefreshTokenCommand(requestDto.RefreshToken));
             return Ok(result);
         
        

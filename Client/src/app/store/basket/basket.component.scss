@@ -1,56 +1,128 @@
-.basket{
+/* Root basket container */
+.basket {
   padding: 20px;
+  background: #fff;
+  border-radius: 4px;
 }
 
-.basket-table{
+/* Basket table styling */
+.basket-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
 }
+
 .basket-table th,
 .basket-table td {
-  border-bottom: 1px solid #ddd;
   padding: 10px;
+  border-bottom: 1px solid #ddd;
   text-align: left;
 }
+
+/* Product images */
 .basket-table img {
   vertical-align: middle;
   margin-right: 8px;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
 }
+
+/* Buttons in table */
 .basket-table button {
   margin: 0 4px;
   padding: 4px 8px;
   cursor: pointer;
 }
-.remove-btn{
 
-  color: white;
+/* Remove button */
+.remove-btn {
+  color: #fff;
   background: #d9534f;
   border: none;
   border-radius: 4px;
+  font-weight: 500;
+  transition: background 0.2s;
 }
-.remove-btn:hover{
+
+.remove-btn:hover {
   background: #c9302c;
 }
-.remove-btn:hover{
-  background: #c9302c;
-}
-.basket-summary{
+
+/* Basket summary section */
+.basket-summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 1rem;
 }
-.btn-checkout{
+
+/* Checkout button */
+.btn-checkout {
   padding: 10px 20px;
-  background: #007bff;
-  color: #fff;
-  border: none;
+  background: #f0c14b; /* Amazon yellow */
+  color: #111;
+  border: 1px solid #a88734;
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
-}
-.btn-checkout:hover{
-  background: #0056b3;
+  transition: background 0.2s;
 }
 
+.btn-checkout:hover {
+  background: #e2b33b;
+}
 
+/* Checkout form grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Inputs and select styling */
+.form-grid input,
+.form-grid select {
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Focus state */
+.form-grid input:focus,
+.form-grid select:focus {
+  outline: none;
+  border-color: #f0c14b;
+  box-shadow: 0 0 0 2px rgba(240, 193, 75, 0.3);
+}
+
+/* Custom arrow for select dropdown */
+.form-grid select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='5' viewBox='0 0 10 5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 5 5-5H0z' fill='%23333'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 10px 5px;
+  cursor: pointer;
+}
+
+/* Placeholder color */
+.form-grid input::placeholder {
+  color: #888;
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

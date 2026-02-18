@@ -15,6 +15,7 @@ export class AuthService {
   private router = inject(Router);
 
   private readonly baseUrl = '/api/v1/auth';
+  private readonly tokenKey = 'access_token';
 
    authReady = signal(false);
   readonly isAuthReady = this.authReady.asReadonly();
@@ -53,14 +54,18 @@ export class AuthService {
 
   // ---------- REFRESH ----------
   refresh() {
-    return this.http.post<{ accessToken: string }>(`${this.baseUrl}/refresh-token`, {}, { withCredentials: true })
-      .pipe(
-        tap(res => this.setUserFromToken(res.accessToken)),
-        catchError(err => {
-          this.clearAuth();
-          return throwError(() => err);
-        })
-      );
+    const token = localStorage.getItem('refresh_token');
+    if (!token) return throwError(() => new Error('No refresh token'));
+
+    return this.http.post<{ jwtToken: string; refreshToken: string }>(
+      `${this.baseUrl}/refresh-token`,
+      { token }, { withCredentials: true }
+    ).pipe(
+      tap(res => {
+        this.setUserFromToken(res.jwtToken);
+        localStorage.setItem('refresh_token', res.refreshToken);
+      })
+    );
   }
 
   // ---------- TRY REFRESH ----------
@@ -80,15 +85,37 @@ export class AuthService {
   }
 
   private clearAuth() {
+    localStorage.removeItem(this.tokenKey);
     this.accessToken.set(null);
     this.userSignal.set(null);
   }
 
   getToken(): string | null {
-    return this.accessToken();
+    return this.accessToken()
+      ??localStorage.getItem(this.tokenKey);
+  }
+  get userId(): string | null {
+    return this.userSignal()?.id ?? null;
+  }
+  get userEmail(): string | null {
+    return this.userSignal()?.email ?? null;
+  }
+  restoreUser() {
+    const token = localStorage.getItem(this.tokenKey);
+    if (!token) {
+      const refreshToken = localStorage.getItem('refresh_token');
+      if (refreshToken) {
+        this.refresh().subscribe();
+      }
+      return;
+    }
+    this.setUserFromToken(token);
   }
 
+
+
   private setUserFromToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
     this.accessToken.set(token);
     const payload = decodeJwt<JwtPayload>(token);
     this.userSignal.set(payload ? mapJwtToUser(payload, token) : null);

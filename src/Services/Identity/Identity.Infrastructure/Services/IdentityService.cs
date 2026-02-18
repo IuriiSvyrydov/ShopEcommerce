@@ -2,6 +2,7 @@
 using Identity.Application.Exceptions;
 using Identity.Application.Exceptions.Identity;
 using Identity.Application.Features.Commands;
+using Identity.Application.Interfaces;
 
 namespace Identity.Infrastructure.Services;
 
@@ -9,10 +10,13 @@ internal class IdentityService : IIdentityService
 {
     private readonly ITokenService _tokenService;
     private readonly UserManager<ApplicationUser> _userManager;
-    public IdentityService(UserManager<ApplicationUser> userManager,ITokenService tokenService)
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
+    public IdentityService(UserManager<ApplicationUser> userManager,ITokenService tokenService,
+        IRefreshTokenRepository refreshTokenRepository)
     {
         _userManager = userManager;
         _tokenService = tokenService;
+        _refreshTokenRepository = refreshTokenRepository;
     }
 
     public async Task<LoginResult> LoginAsync(string email, string password)
@@ -34,8 +38,15 @@ internal class IdentityService : IIdentityService
             user.LastName!,    
             roles
         );
+        //generate refresh token
+        var refreshToken = _tokenService.GenerateRefreshToken(user.Id);
+        var rawRefreshToken = refreshToken.Token;
+        refreshToken.Token = _tokenService.HashRefreshToken(refreshToken.Token);
 
-        return new LoginResult(token, DateTime.UtcNow.AddMinutes(30));
+        //save refresh token to database
+        await _refreshTokenRepository.AddAsync(refreshToken);
+
+        return new LoginResult(token, DateTime.UtcNow.AddMinutes(30),rawRefreshToken);
     }
 
 

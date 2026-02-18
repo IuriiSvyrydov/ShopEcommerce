@@ -1,9 +1,11 @@
+import {PaymentStatus} from './PaymentStatus';
+
 export interface PaymentDto {
     id:string;
     orderId:string;
     amount:number;
     currency:string;
-    status: 'Pending' | 'Processing' |'Paid' | 'Failed'| 'Refunded';
+    status: PaymentStatus;
     createdAt: string;
     completedAt?: string;
 

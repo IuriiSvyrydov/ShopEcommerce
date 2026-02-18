@@ -1,6 +1,6 @@
 import {Routes} from '@angular/router';
 
-import {Home} from './home/home';
+import {HomeComponent} from './home/home.component';
 import {ServerError} from './core/server-error/server-error';
 import {UnAuthenticated} from './core/un-authenticated/un-authenticated';
 import {NotFound} from './core/not-found/not-found';
@@ -37,8 +37,13 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'payment/:id',
+    loadComponent: () =>
+      import('./store/payment/payment.component').then(m => m.PaymentComponent)
+  },
 
-  { path: '', component: Home },
+  { path: '', component: HomeComponent },
   { path: 'store', loadChildren: () => import('./store/store-module').then(m => m.StoreModule) },
   { path: 'server-error', component: ServerError },
   { path: 'unauthenticated', component: UnAuthenticated },

@@ -9,7 +9,7 @@ public sealed class OrderContextFactory : IDesignTimeDbContextFactory<OrderConte
     public OrderContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<OrderContext>();
-        optionsBuilder.UseSqlServer("Server=localhost,1433;Database=OrderingDb;User Id=sa;Password=Passw0rd123!;TrustServerCertificate=True;Encrypt=False;",
+        optionsBuilder.UseSqlServer("Server=localhost,1433;Database=OrderDb;User Id=sa;Password=Passw0rd123!;TrustServerCertificate=True;Encrypt=False;",
             sql =>
             {
                 sql.EnableRetryOnFailure(

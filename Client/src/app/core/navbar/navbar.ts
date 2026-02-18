@@ -5,7 +5,7 @@ import {Router, RouterLink, RouterModule} from '@angular/router';
 
 import { BasketService } from '../../store/services/basket.service';
 import { AuthService } from '../../core/services/auth.service';
-import {CurrencyService} from '../services/currency.service';
+import {CurrencyService} from '../../store/services/currency.service';
 
 
 @Component({

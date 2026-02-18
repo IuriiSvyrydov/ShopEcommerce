@@ -3,20 +3,17 @@ import 'zone.js';
 import { AppComponent } from './app/app.component'; // <- правильный экспорт
 import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routes';
-import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
-import {JwtInterceptor} from './app/core/interceptors/jwt.interceptor';
-import {AuthService} from './app/core/services/auth.service';
-import {catchError, of} from 'rxjs';
+import { provideHttpClient, withInterceptors} from '@angular/common/http';
+
+
+import {AuthInterceptor} from './app/core/interceptors/auth.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: JwtInterceptor,
-      multi: true
-    }
+    provideHttpClient(
+      withInterceptors([AuthInterceptor])
+    )
   ]
 }).catch(err => console.error(err));
 

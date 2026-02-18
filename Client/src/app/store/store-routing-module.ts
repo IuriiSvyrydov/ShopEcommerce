@@ -1,5 +1,5 @@
 ﻿import {RouterModule, Routes} from '@angular/router';
-import {Store} from './store/store';
+import {StoreComponent} from './store/store.component';
 import {ProductDetails} from './product-details/product-details';
 import {NgModule} from '@angular/core';
 import {BasketComponent} from './basket/basket.component';
@@ -7,7 +7,7 @@ import {BasketComponent} from './basket/basket.component';
 const routes: Routes = [
   {
     path: '',
-    component: Store   //By default
+    component: StoreComponent   //By default
   },
   {
     path: 'product/:id',

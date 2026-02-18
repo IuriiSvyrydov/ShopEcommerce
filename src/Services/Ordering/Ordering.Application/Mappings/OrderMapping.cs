@@ -29,6 +29,7 @@ public static class OrderMapping
     public static Order ToEntity(this CheckoutOrderCommand command)
         => new()
         {
+            Id = Guid.NewGuid(),    
             UserName = command.UserName,
             TotalPrice = command.TotalPrice,
             FirstName = command.FirstName,
@@ -40,8 +41,10 @@ public static class OrderMapping
             ZipCode = command.ZipCode,
             PaymentMethod = command.PaymentMethod,
             Currency = command.Currency,
-            OrderStatus = OrderStatus.Pending
+            OrderStatus = OrderStatus.Pending,
+            CreatedDate = DateTime.UtcNow
         };
+
 
     /* ===================== UPDATE ===================== */
 
@@ -62,21 +65,22 @@ public static class OrderMapping
     /* ===================== DTO → COMMAND ===================== */
 
     public static CheckoutOrderCommand ToCommand(this CreateOrderDto dto)
-        => new()
-        {
-            UserName = dto.UserName,
-            TotalPrice = dto.TotalPrice,
-            FirstName = dto.FirstName,
-            LastName = dto.LastName,
-            EmailAddress = dto.EmailAddress,
-            AddressLine = dto.AddressLine,
-            Country = dto.Country,
-            State = dto.State,
-            ZipCode = dto.ZipCode,
-            CardName = dto.CardName,
-            PaymentMethod = dto.PaymentMethod,
-            Currency = dto.Currency
-        };
+    => new()
+    {
+        UserName = dto.UserName,
+        TotalPrice = dto.TotalPrice,
+        FirstName = dto.FirstName,
+        LastName = dto.LastName,
+        EmailAddress = dto.EmailAddress,
+        AddressLine = dto.AddressLine,
+        Country = dto.Country,
+        State = dto.State,
+        ZipCode = dto.ZipCode,
+        PaymentMethod = dto.PaymentMethod,
+        Currency = dto.Currency,
+        CardName = dto.FirstName + " " + dto.LastName  // временно
+    };
+
 
     public static UpdateOrderCommand ToCommand(this OrderDTO dto)
         => new()

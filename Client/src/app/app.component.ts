@@ -17,6 +17,9 @@ import {RouterOutlet} from '@angular/router';
 })
 export class AppComponent implements OnInit {
   private authService = inject(AuthService);
+  constructor() {
+    this.authService.restoreUser();
+  }
 
   ngOnInit(): void {
     this.authService.tryRefresh().subscribe({

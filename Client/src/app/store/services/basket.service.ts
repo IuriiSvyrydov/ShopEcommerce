@@ -2,7 +2,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, of, tap } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
-import { Basket, BasketItem } from '../models/Basket';
+import { Basket } from '../models/Basket';
 import { Product } from '../models/Product';
 
 @Injectable({ providedIn: 'root' })

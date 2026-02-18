@@ -21,7 +21,7 @@ public class OrderController : ControllerBase
         return Ok(orders);
     }
     [HttpPost(Name = "CheckoutOrder")]
-    public async Task<ActionResult<int>> CheckoutOrder([FromBody] CreateOrderDto dto)
+    public async Task<ActionResult<Guid>> CheckoutOrder([FromBody] CreateOrderDto dto)
     {
         
         // Extract CorrelationId from request headers
@@ -31,7 +31,7 @@ public class OrderController : ControllerBase
       command.CorrelationId = Guid.Parse(correlationId);
         var result = await _mediator.Send(command);
         _logger.LogInformation($"Order created with id: {result},CorrelationId: {correlationId}");
-        return Ok(result);
+        return Ok(new {orderId = result});
 
     }
     [HttpPut(Name = "UpdateOrder")]

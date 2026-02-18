@@ -3,7 +3,6 @@
 namespace Ordering.Application.DTO;
 
 public record CreateOrderDto(
-     int Id,
     string UserName,
     decimal TotalPrice,
     string FirstName,
@@ -12,9 +11,8 @@ public record CreateOrderDto(
     string AddressLine,
     string Country,
     string State,
-    string ZipCode,
-    string CardName,
-    string Expiration,
+    string ZipCode, 
     int PaymentMethod,
-    string Currency);
+    string Currency,
+    string? CardName);
 

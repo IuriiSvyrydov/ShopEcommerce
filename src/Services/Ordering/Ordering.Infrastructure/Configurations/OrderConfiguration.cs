@@ -11,10 +11,14 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o=>o.Id)
             .IsRequired()
             .ValueGeneratedNever();
+
         builder.Property(o => o.EmailAddress).IsRequired()
             .HasMaxLength(50);
         builder.Property(x => x.OrderStatus)
             .HasConversion<string>()
+            .IsRequired();
+        builder.Property(x=>x.TotalPrice)
+            .HasColumnType("decimal(18,4)")
             .IsRequired();
     }
 }

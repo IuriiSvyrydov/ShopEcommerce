@@ -83,24 +83,8 @@
     // ===================== BASKET =====================
 
     {
-      "UpstreamPathTemplate": "/Basket/{userName}",
-      "UpstreamHttpMethod": [ "GET", "DELETE" ],
-      "DownstreamPathTemplate": "/api/Basket/{userName}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "basket.api",
-          "Port": 8080
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      }
-    },
-
-    {
       "UpstreamPathTemplate": "/Basket",
-      "UpstreamHttpMethod": [ "POST" ],
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
       "DownstreamPathTemplate": "/api/Basket",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -113,7 +97,6 @@
         "AuthenticationProviderKey": "Bearer"
       }
     },
-
     {
       "UpstreamPathTemplate": "/Basket/checkout",
       "UpstreamHttpMethod": [ "POST" ],
@@ -130,24 +113,8 @@
       }
     },
 
+
     // ===================== ORDER =====================
-
-    {
-      "UpstreamPathTemplate": "/Order/{userName}",
-      "UpstreamHttpMethod": [ "GET" ],
-      "DownstreamPathTemplate": "/api/Order/{userName}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "ordering.api",
-          "Port": 8080
-        }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      }
-    },
-
     {
       "UpstreamPathTemplate": "/Order",
       "UpstreamHttpMethod": [ "POST", "PUT" ],
@@ -163,7 +130,21 @@
         "AuthenticationProviderKey": "Bearer"
       }
     },
-
+    {
+      "UpstreamPathTemplate": "/Order/{userName}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/Order/{userName}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ordering.api",
+          "Port": 8080
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
     {
       "UpstreamPathTemplate": "/Order/{id}",
       "UpstreamHttpMethod": [ "DELETE" ],
@@ -179,6 +160,7 @@
         "AuthenticationProviderKey": "Bearer"
       }
     },
+
 
     // ===================== AUTH =====================
     {

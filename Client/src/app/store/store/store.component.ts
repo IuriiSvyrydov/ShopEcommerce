@@ -12,10 +12,10 @@ import {BasketService} from '../services/basket.service';
   selector: 'app-store',
   standalone: true,
   imports: [CommonModule,RouterLink],
-  templateUrl: './store.html',
-  styleUrls: ['./store.scss']
+  templateUrl: './store.component.html',
+  styleUrls: ['./store.component.scss']
 })
-export class Store implements OnInit {
+export class StoreComponent implements OnInit {
   private productService = inject(ProductService);
   private route = inject(ActivatedRoute);
   private basketService = inject(BasketService);

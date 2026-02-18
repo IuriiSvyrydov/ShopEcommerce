@@ -15,7 +15,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddInfrastructureServices(builder.Configuration)
     .RegisterApplicationServices();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "Ordering.API", Version = "v1" });
+});
 builder.Services.AddMassTransit(config =>
 {
     config.AddConsumer<BasketOrderingConsumer>();

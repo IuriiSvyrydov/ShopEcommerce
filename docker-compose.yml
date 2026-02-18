@@ -13,6 +13,7 @@ volumes:
   orderdb-data:
   identitydb-data:
   paymentdb-data:
+  basket_keys:
 
 services:
   # ===================== DATABASES =====================
@@ -270,19 +271,27 @@ services:
     container_name: basketapi
     restart: always
     environment:
-      ASPNETCORE_ENVIRONMENT: Production
-     # MT_LICENSE: ""
+      ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__Redis: basketdb:6379
       EventBusSettings__HostAddress: amqp://guest:guest@rabbitmq:5672
+      GrpcSettings__DiscountUrl: http://discountapi:8080
+      Jwt__Key: "super_secret_key_1234567890!@#$123"
+      Jwt__Issuer: ecommerce.identity
+      Jwt__Audience: ecommerce.clients
     depends_on:
       basketdb:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      discount.api:
+        condition: service_healthy
     ports:
       - "8001:8080"
     networks:
       - appnet
+    volumes:
+      - basket_keys:/keys
+
 
   discount.api:
     build:
@@ -295,6 +304,9 @@ services:
       # MT_LICENSE: ""
       DatabaseSettings__ConnectionString: Host=discountdb;Port=5432;Database=DiscountDb;User Id=postgres;Password=postgres
       EventBusSettings__HostAddress: amqp://guest:guest@rabbitmq:5672
+      Jwt__Key: "super_secret_key_1234567890!@#$123"
+      Jwt__Issuer: ecommerce.identity
+      Jwt__Audience: ecommerce.clients
     depends_on:
       discountdb:
         condition: service_healthy
@@ -304,29 +316,32 @@ services:
       - "8002:8080"
     networks:
       - appnet
-
   ordering.api:
-    build:
-      context: .
-      dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
-    container_name: orderingapi
-    restart: always
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__DefaultConnection: >
-        Server=orderingdb,1433;
-        Database=OrderingDb;
-        User Id=sa;
-        Password=Passw0rd123!;
-        TrustServerCertificate=True;
-        Encrypt=False;
-    depends_on:
-      orderingdb:
-        condition: service_healthy
-    ports:
-      - "8003:8080"
-    networks:
-      - appnet
+   build:
+    context: .
+    dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
+   container_name: orderingapi
+   restart: always
+   environment:
+    ASPNETCORE_ENVIRONMENT: Production
+    ConnectionStrings__DefaultConnection: >
+      Server=orderingdb,1433;
+      Database=OrderDb;
+      User Id=sa;
+      Password=Passw0rd123!;
+      TrustServerCertificate=True;
+      Encrypt=False;
+    EventBusSettings__HostAddress: amqp://guest:guest@rabbitmq:5672
+   depends_on:
+    orderingdb:
+      condition: service_healthy
+    rabbitmq:
+      condition: service_healthy
+   ports:
+    - "8003:8080"
+   networks:
+    - appnet
+
 
   payment.api:
    build:

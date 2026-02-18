@@ -51,6 +51,12 @@
     <Project Path="src/Services/Payment/Payment.Application/Payment.Application.csproj" Id="4ea7b860-8b24-476c-a141-8a64bbea617e" />
     <Project Path="src/Services/Payment/Payment.Domain/Payment.Domain.csproj" Id="6cf53cf1-6723-4843-bb2e-ce1e655c63da" />
   </Folder>
+  <Folder Name="/src/Services/Reporting/">
+    <Project Path="src/Services/Reporting/Reporting.API/Reporting.API.csproj" Id="84f5621f-160e-46d1-9188-6308b2f5d400" />
+    <Project Path="src/Services/Reporting/Reporting.Application/Reporting.Application.csproj" Id="709614e0-d2a6-4769-a4fe-77e5ae54ddb2" />
+    <Project Path="src/Services/Reporting/Reporting.Domain/Reporting.Domain.csproj" Id="3eb42d96-1ac5-44f0-8a18-f9d9d4f6b3f6" />
+    <Project Path="src/Services/Reporting/Reporting.Infrastructure/Reporting.Infrastructure.csproj" Id="9aa8b66b-ce90-4064-866d-abb4f234958b" />
+  </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>
